@@ -151,8 +151,8 @@
     .fq-btn { display:flex; flex-direction:column; align-items:center; gap:12px; cursor:pointer; opacity:0; transform:translateX(120px); border:none; background:none; }
     .fq-btn.coffee { animation: fqSlideIn 0.6s 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
     .fq-btn.tea { animation: fqSlideIn 0.6s 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-    .fq-btn img { width:100px; height:100px; object-fit:contain; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.5)); transition:transform 0.2s; }
-    .fq-btn:hover img { transform:scale(1.1) rotate(-5deg); }
+    .fq-emoji { font-size:80px; line-height:1; transition:transform 0.2s; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.4)); }
+    .fq-btn:hover .fq-emoji { transform:scale(1.15) rotate(-8deg); }
     .fq-btn-label { font-family:'Unbounded',sans-serif; font-size:1.1rem; font-weight:700; }
     .fq-btn.coffee .fq-btn-label { color:var(--coffee); }
     .fq-btn.tea .fq-btn-label { color:var(--tea); }
@@ -357,15 +357,15 @@
 
 <!-- FIRST QUESTION OVERLAY -->
 <div id="fq-overlay" class="fq-overlay" style="display:none">
-  <p class="fq-title" data-lang="firstQTitle">Primera pregunta</p>
+  <p class="fq-title" id="fq-title">Primera pregunta</p>
   <div class="fq-options">
     <button class="fq-btn coffee" onclick="selectFirstOption('A')">
-      <img id="fq-coffee-img" src="" alt="Café" />
+      <div class="fq-emoji">☕</div>
       <span class="fq-btn-label" id="fq-label-a">Café</span>
     </button>
     <div class="fq-or">o</div>
     <button class="fq-btn tea" onclick="selectFirstOption('B')">
-      <img id="fq-tea-img" src="" alt="Té" />
+      <div class="fq-emoji">🍵</div>
       <span class="fq-btn-label" id="fq-label-b">Té</span>
     </button>
   </div>
