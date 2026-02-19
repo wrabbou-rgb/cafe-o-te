@@ -158,11 +158,17 @@ function setLang(l){
   });
   renderHowSteps();
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.l===lang));
-  // Update page title
-  const titleEl = document.getElementById('page-title');
-  const titleText = '☕ ' + (titles[l] || 'Café o Té');
-  if(titleEl) titleEl.textContent = titleText;
+  // Update page title and logo
+  const titleText = titles[l] || 'Café o Té';
   document.title = titleText;
+  const logoEl = document.getElementById('main-logo');
+  if(logoEl) {
+    const parts = titleText.split(' o ').length > 1 ? titleText.split(' o ') : titleText.split(' or ').length > 1 ? titleText.split(' or ') : titleText.split(' ou ').length > 1 ? titleText.split(' ou ') : titleText.split(' oder ');
+    const sep = titleText.includes(' oder ') ? ' oder ' : titleText.includes(' ou ') ? ' ou ' : titleText.includes(' or ') ? ' or ' : ' o ';
+    if(parts.length >= 2) {
+      logoEl.innerHTML = `<span style="color:#f5a623">${parts[0]}</span> ${sep.trim()} <span style="color:#8bc34a">${parts[1]}</span>`;
+    }
+  }
 }
 
 function renderHowSteps(){
@@ -181,27 +187,41 @@ let selectedEntity=null;
 
 async function searchWikipedia(query){
   try{
-    // Use PetScan/Wikidata approach: search with categories filter for people & fictional characters
-    // First get candidates via opensearch
-    const url=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}+incategory:"People"+OR+incategory:"Fictional+characters"+OR+incategory:"Animated+characters"&srlimit=8&format=json&origin=*`;
-    const res=await fetch(url);
+    // Search Wikidata for humans (Q5) and fictional characters (Q15632617)
+    const sparql=`SELECT DISTINCT ?label WHERE {
+      { ?item wdt:P31 wd:Q5. } UNION { ?item wdt:P31 wd:Q15632617. } UNION { ?item wdt:P31 wd:Q1114461. }
+      ?item rdfs:label ?label.
+      FILTER(LANG(?label)="es" || LANG(?label)="en" || LANG(?label)="fr" || LANG(?label)="de")
+      FILTER(STRSTARTS(LCASE(?label), LCASE("${query}")))
+    } LIMIT 8`;
+    const url=`https://query.wikidata.org/sparql?query=${encodeURIComponent(sparql)}&format=json`;
+    const res=await fetch(url,{headers:{'Accept':'application/sparql-results+json'}});
     const data=await res.json();
-    const titles=(data.query&&data.query.search||[]).map(r=>r.title);
-    if(titles.length>0){ showDropdown(titles,query); return; }
-    // Fallback: broader search but still filtered
-    const url2=`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=8&namespace=0&format=json&origin=*`;
+    const results=data.results.bindings.map(b=>b.label.value);
+    if(results.length>0){showDropdown(results,query);return;}
+    // Fallback to Wikipedia opensearch but filtered strictly
+    const url2=`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json&origin=*`;
     const res2=await fetch(url2);
     const data2=await res2.json();
-    // Filter out obvious non-people results (articles, concepts, places without person indicators)
     const filtered=(data2[1]||[]).filter(t=>{
-      const lower=t.toLowerCase();
-      // Keep if looks like a name (has space = likely firstname lastname) or known fictional pattern
-      const hasSpace=t.includes(' ');
-      const looksLikeConcept=/^(the |a |an |list of|history of|theory|concept|system|process|method)/i.test(t);
-      return hasSpace && !looksLikeConcept;
+      // Must look like a name: 2+ words, no generic article patterns
+      const words=t.trim().split(/\s+/);
+      const isConcept=/^(list|history|theory|the |a |an |el |la |los |las |le |les |die |der |das )/i.test(t);
+      const isYear=/^\d{4}/.test(t);
+      const isEvent=/(war|battle|revolution|crisis|disaster|earthquake|election)/i.test(t);
+      return words.length>=2 && !isConcept && !isYear && !isEvent;
     });
-    showDropdown(filtered.length>0?filtered:data2[1],query);
-  }catch(e){ hideDropdown(); }
+    showDropdown(filtered,query);
+  }catch(e){
+    // Final fallback: simple opensearch with name filter
+    try{
+      const url=`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=8&namespace=0&format=json&origin=*`;
+      const res=await fetch(url);
+      const data=await res.json();
+      const filtered=(data[1]||[]).filter(t=>t.split(' ').length>=2&&!/^(list|history|the |a )/i.test(t));
+      showDropdown(filtered,query);
+    }catch(e2){hideDropdown();}
+  }
 }
 
 function showDropdown(titles,query){
@@ -487,5 +507,6 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrapper'))hideDropdown();});
 
 setLang('es');
+
 
 
