@@ -286,9 +286,9 @@
       <button class="btn btn-primary" style="width:100%;margin-bottom:16px" onclick="sendQuestion()" data-lang="askBtn">Preguntar</button>
 
       <div class="divider" data-lang="orIfYouKnow">o si ya sabes</div>
-      <div style="display:flex;gap:8px">
-        <input id="guess-input" class="input-field" style="flex:1" type="text" data-lang="guessPlaceholder" placeholder="Mi respuesta es..." />
-        <button class="btn btn-secondary" style="white-space:nowrap;padding:16px" onclick="makeGuess()" data-lang="guessBtn">¡Adivinar!</button>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input id="guess-input" class="input-field" type="text" data-lang="guessPlaceholder" placeholder="Mi respuesta es..." style="font-size:1.2rem;padding:18px 20px;" />
+        <button class="btn btn-primary" onclick="makeGuess()" data-lang="guessBtn">Adivinar</button>
       </div>
       <p id="guess-error" class="error-msg" style="display:none" data-lang="waitError">Espera la respuesta antes de preguntar de nuevo</p>
     </div>
@@ -327,4 +327,5 @@
 <script src="game.js"></script>
 </body>
 </html>
+
 
