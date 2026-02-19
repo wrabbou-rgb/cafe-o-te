@@ -133,9 +133,10 @@ io.on('connection', (socket) => {
     playerRoom.set(socket.id, upperCode);
     socket.join(upperCode);
 
-    socket.emit('room_joined', roomData(room));
-    socket.to(upperCode).emit('room_updated', roomData(room));
-    io.to(upperCode).emit('room_updated', roomData(room));
+    const rd = roomData(room);
+    socket.emit('room_joined', rd);
+    io.to(upperCode).emit('room_updated', rd);
+    console.log(`Player ${name} joined room ${upperCode}, players: ${room.players.length}`);
   });
 
   // --- LEAVE ROOM ---
@@ -191,6 +192,19 @@ io.on('connection', (socket) => {
     if (!room || room.thinker !== socket.id) return;
     // We don't send the word to server for privacy, just signal ready
     socket.to(code).emit('word_ready');
+  });
+
+  // --- FIRST CHOICE ---
+  socket.on('first_choice', ({ code, optA, optB, choice }) => {
+    const room = rooms.get(code);
+    if (!room || room.thinker !== socket.id) return;
+    // Store in history
+    room.history.push({ optA, optB, choice });
+    room.word = room.word || null;
+    // Tell thinker it's confirmed
+    socket.emit('first_choice_confirmed', { optA, optB, choice });
+    // Tell guesser the first choice was made
+    socket.to(code).emit('first_choice_made', { optA, optB, choice });
   });
 
   // --- SEND QUESTION ---
