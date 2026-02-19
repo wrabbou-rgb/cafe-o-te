@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>☕ Café o Té</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0b08;
+      --surface: #1a1510;
+      --card: #221d16;
+      --accent: #f5a623;
+      --accent2: #e8d5b0;
+      --tea: #8bc34a;
+      --coffee: #f5a623;
+      --text: #f0e8d8;
+      --muted: #7a6e60;
+      --border: rgba(245,166,35,0.2);
+      --glow: rgba(245,166,35,0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .bg-orbs::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 70%);
+      top: -200px; left: -200px;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .bg-orbs::after {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,195,74,0.06) 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+      animation: drift 15s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(60px, 40px) scale(1.1); }
+    }
+
+    /* ========= SCREENS ========= */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: fadeIn 0.4s ease;
+    }
+    .screen.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========= HERO ========= */
+    .logo {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+      background: linear-gradient(135deg, #f5a623 0%, #e8d5b0 50%, #8bc34a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .logo-emojis {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      margin-bottom: 16px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-style: italic;
+      font-size: 1rem;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    /* ========= NAME INPUT ========= */
+    .name-section {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 32px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 400;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 16px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+    .input-field::placeholder { color: var(--muted); }
+
+    /* ========= BUTTONS ========= */
+    .btn {
+      padding: 16px 32px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .btn:hover::after { opacity: 0.08; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0d0b08;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 10px 20px;
+    }
+    .btn-coffee {
+      background: linear-gradient(135deg, #f5a623, #e67e00);
+      color: #0d0b08;
+      flex: 1;
+      padding: 24px;
+      font-size: 1.1rem;
+    }
+    .btn-tea {
+      background: linear-gradient(135deg, #8bc34a, #558b2f);
+      color: #0d0b08;
+      flex: 1;
+      padding: 24px;
+      font-size: 1.1rem;
+    }
+
+    /* ========= MENU ========= */
+    .menu-grid {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ========= HOW TO PLAY ========= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 24px;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      max-width: 500px;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal h2 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.3rem;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .how-step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #0d0b08;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text { color: var(--accent2); font-size: 0.95rem; line-height: 1.5; }
+    .step-text strong { color: var(--accent); }
+
+    /* ========= LOBBY ========= */
+    .lobby-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+    }
+
+    .room-code {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      margin: 16px 0;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .room-code:hover { opacity: 0.7; }
+
+    .lobby-status {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .players-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 24px 0;
+    }
+
+    .player-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .player-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--tea));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #0d0b08;
+      font-size: 0.9rem;
+    }
+    .player-name { font-weight: 400; }
+    .player-host { margin-left: auto; font-size: 0.75rem; color: var(--accent); }
+
+    .waiting-dots {
+      display: inline-flex;
+      gap: 6px;
+      margin-left: 8px;
+    }
+    .waiting-dots span {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    .waiting-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .waiting-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.3; }
+      40% { opacity: 1; }
+    }
+
+    /* ========= GAME SCREEN ========= */
+    .game-header {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .round-badge {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.7rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 100px;
+      color: var(--muted);
+    }
+
+    .vs-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .vs-name {
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .game-role {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: 'Unbounded', sans-serif;
+      margin-bottom: 16px;
+    }
+
+    .question-text {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 32px;
+      color: var(--text);
+    }
+    .question-text .opt-a { color: var(--coffee); }
+    .question-text .opt-b { color: var(--tea); }
+
+    .choice-row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .thinking-word {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 900;
+      color: var(--accent);
+      margin: 16px 0;
+      padding: 20px;
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px dashed var(--border);
+    }
+
+    .answer-input-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .answer-input-row .input-field {
+      flex: 1;
+    }
+
+    .history-log {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .history-item .chosen { color: var(--accent2); }
+
+    /* ========= RESULT ========= */
+    .result-emoji {
+      font-size: 5rem;
+      margin-bottom: 16px;
+    }
+    .result-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .result-word {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.5rem;
+      color: var(--accent);
+      padding: 16px 32px;
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin: 24px 0;
+    }
+    .result-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; }
+
+    /* ========= MATCHMAKING ========= */
+    .spin-ring {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+      margin: 32px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin: 16px 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    /* ========= JOIN ROOM ========= */
+    .join-code-input {
+      text-align: center;
+      letter-spacing: 0.3em;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      z-index: 200;
+      animation: toastIn 0.3s ease;
+      white-space: nowrap;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .error-msg {
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orbs"></div>
+
+  <!-- ===== SCREEN: HOME ===== -->
+  <div id="screen-home" class="screen active">
+    <div class="logo-emojis">☕🍵</div>
+    <h1 class="logo">Café o Té</h1>
+    <p class="tagline">el juego de asociación más viral</p>
+
+    <div class="name-section">
+      <label class="input-label" for="player-name">Tu nombre</label>
+      <input id="player-name" class="input-field" type="text" placeholder="¿Cómo te llamas?" maxlength="20" autocomplete="off" />
+      <p id="name-error" class="error-msg" style="display:none">Escribe tu nombre para continuar</p>
+    </div>
+
+    <div class="menu-grid">
+      <button class="btn btn-primary" onclick="goToPlay()">Jugar ☕</button>
+      <button class="btn btn-ghost" onclick="showHowToPlay()">¿Cómo se juega?</button>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: PLAY MENU ===== -->
+  <div id="screen-play" class="screen">
+    <h1 class="logo" style="font-size:2rem; margin-bottom:32px">¿Cómo quieres jugar?</h1>
+
+    <div class="menu-grid">
+      <button class="btn btn-primary" onclick="findRandom()">🎲 Partida rápida (random)</button>
+      <button class="btn btn-secondary" onclick="createRoom()">🔒 Crear sala privada</button>
+      <button class="btn btn-secondary" onclick="showJoinRoom()">🔑 Unirse con código</button>
+      <button class="btn btn-ghost" onclick="showScreen('screen-home')">← Volver</button>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: MATCHMAKING ===== -->
+  <div id="screen-matchmaking" class="screen">
+    <div class="spin-ring"></div>
+    <p class="section-title">Buscando rival<span class="waiting-dots"><span></span><span></span><span></span></span></p>
+    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:32px">Te emparejamos con alguien al azar</p>
+    <button class="btn btn-ghost" onclick="cancelMatchmaking()">Cancelar</button>
+  </div>
+
+  <!-- ===== SCREEN: LOBBY ===== -->
+  <div id="screen-lobby" class="screen">
+    <div class="lobby-card">
+      <p style="color:var(--muted); font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; font-family:'Unbounded',sans-serif">Código de sala</p>
+      <div class="room-code" id="room-code-display" onclick="copyRoomCode()">----</div>
+      <p style="color:var(--muted); font-size:0.75rem; margin-bottom:4px">Toca el código para copiar</p>
+
+      <div class="players-list" id="players-list"></div>
+
+      <div class="lobby-status" id="lobby-status">
+        Esperando jugadores<span class="waiting-dots"><span></span><span></span><span></span></span>
+      </div>
+
+      <button class="btn btn-primary" id="start-game-btn" style="display:none" onclick="startGame()">¡Empezar!</button>
+      <button class="btn btn-ghost" onclick="leaveLobby()">← Salir</button>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: JOIN ROOM ===== -->
+  <div id="screen-join" class="screen">
+    <h2 class="section-title">Unirse a sala</h2>
+    <div class="name-section">
+      <label class="input-label">Código de sala</label>
+      <input id="join-code" class="input-field join-code-input" type="text" placeholder="ABCD" maxlength="4" autocomplete="off" />
+      <p id="join-error" class="error-msg" style="display:none">Código no encontrado</p>
+    </div>
+    <div class="menu-grid">
+      <button class="btn btn-primary" onclick="joinRoom()">Unirse</button>
+      <button class="btn btn-ghost" onclick="showScreen('screen-play')">← Volver</button>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: GAME (THINKER) ===== -->
+  <div id="screen-thinker" class="screen">
+    <div class="game-header">
+      <div class="round-badge">Ronda <span id="round-num">1</span></div>
+      <div class="vs-strip">vs <span class="vs-name" id="vs-name-thinker">rival</span></div>
+    </div>
+
+    <div class="game-card">
+      <p class="game-role">🧠 Piensa en una persona o personaje</p>
+      <div class="thinking-word" id="thinking-word-display">¿En quién estás pensando?</div>
+
+      <div class="answer-input-row" id="thinking-input-row">
+        <input id="thinking-word-input" class="input-field" type="text" placeholder="Ej: Shakira, Harry Potter..." />
+        <button class="btn btn-primary" style="white-space:nowrap; padding:16px" onclick="submitThinkingWord()">Listo ✓</button>
+      </div>
+      <p id="thinker-waiting" style="display:none; color:var(--muted); margin-top:16px">
+        El otro jugador está adivinando<span class="waiting-dots"><span></span><span></span><span></span></span>
+      </p>
+
+      <div id="guess-confirm-section" style="display:none; margin-top:24px">
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px">El adivinador dice que eres:</p>
+        <div id="guess-attempt-display" style="font-family:'Unbounded',sans-serif; font-size:1.5rem; color:var(--accent2); margin-bottom:20px; padding:16px; background:var(--surface); border-radius:12px;"></div>
+        <div class="choice-row">
+          <button class="btn btn-coffee" onclick="confirmGuess(true)" style="background: linear-gradient(135deg,#4caf50,#2e7d32)">✓ ¡Correcto!</button>
+          <button class="btn btn-tea" onclick="confirmGuess(false)" style="background: linear-gradient(135deg,#f44336,#b71c1c)">✗ Incorrecto</button>
+        </div>
+      </div>
+
+      <div id="answer-section" style="display:none; margin-top:24px">
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:16px">El adivinador pregunta:</p>
+        <div id="current-question-thinker" style="font-family:'Unbounded',sans-serif; font-size:1.2rem; color:var(--text); margin-bottom:20px"></div>
+        <div class="choice-row">
+          <button class="btn btn-coffee" onclick="answerQuestion('A')">☕ <span id="opt-a-label">...</span></button>
+          <button class="btn btn-tea" onclick="answerQuestion('B')">🍵 <span id="opt-b-label">...</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-log" id="history-thinker"></div>
+  </div>
+
+  <!-- ===== SCREEN: GAME (GUESSER) ===== -->
+  <div id="screen-guesser" class="screen">
+    <div class="game-header">
+      <div class="round-badge">Ronda <span id="round-num-g">1</span></div>
+      <div class="vs-strip">vs <span class="vs-name" id="vs-name-guesser">rival</span></div>
+    </div>
+
+    <div class="game-card">
+      <p class="game-role">🔍 Adivina en quién está pensando</p>
+      <p id="guesser-waiting" style="color:var(--muted); margin-bottom:24px">
+        El otro jugador elige su personaje<span class="waiting-dots"><span></span><span></span><span></span></span>
+      </p>
+
+      <div id="question-builder" style="display:none">
+        <p style="color:var(--muted); font-size:0.85rem; margin-bottom:8px">Escribe tu pregunta:</p>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap; justify-content:center">
+          <span style="font-family:'Unbounded',sans-serif; font-size:0.9rem">¿</span>
+          <input id="opt-a-input" class="input-field" style="flex:1; min-width:80px; padding:12px;" type="text" placeholder="Café" />
+          <span style="color:var(--muted)">o</span>
+          <input id="opt-b-input" class="input-field" style="flex:1; min-width:80px; padding:12px;" type="text" placeholder="Té" />
+          <span style="font-family:'Unbounded',sans-serif; font-size:0.9rem">?</span>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-bottom:16px" onclick="sendQuestion()">Preguntar →</button>
+
+        <div class="divider">o si ya sabes</div>
+
+        <div style="display:flex; gap:8px">
+          <input id="guess-input" class="input-field" style="flex:1" type="text" placeholder="Mi respuesta es..." />
+          <button class="btn btn-secondary" style="white-space:nowrap; padding:16px" onclick="makeGuess()">¡Adivinar!</button>
+        </div>
+        <p id="guess-error" class="error-msg" style="display:none">Espera la respuesta antes de preguntar de nuevo</p>
+      </div>
+
+      <div id="guesser-answer-display" style="display:none; margin-top:16px">
+        <p style="color:var(--muted); font-size:0.85rem; margin-bottom:8px">Respuesta:</p>
+        <div id="answer-received" style="font-family:'Unbounded',sans-serif; font-size:1.5rem; color:var(--accent)"></div>
+        <p style="color:var(--muted); font-size:0.8rem; margin-top:8px">Ahora haz otra pregunta</p>
+      </div>
+    </div>
+
+    <div class="history-log" id="history-guesser"></div>
+  </div>
+
+  <!-- ===== SCREEN: RESULT ===== -->
+  <div id="screen-result" class="screen">
+    <div class="result-emoji" id="result-emoji">🎉</div>
+    <h2 class="result-title" id="result-title">¡Lo adivinaste!</h2>
+    <p class="result-sub" id="result-sub"></p>
+    <div class="result-word" id="result-word"></div>
+    <div class="menu-grid" style="max-width:400px; width:100%">
+      <button class="btn btn-primary" onclick="playAgain()">Jugar otra vez</button>
+      <button class="btn btn-ghost" onclick="backToHome()">Inicio</button>
+    </div>
+  </div>
+
+  <!-- ===== HOW TO PLAY MODAL ===== -->
+  <div id="modal-howto" class="modal-overlay">
+    <div class="modal">
+      <h2>☕ ¿Cómo se juega?</h2>
+
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <div class="step-text">Dos jugadores se conectan. Uno es el <strong>Pensador</strong> y el otro el <strong>Adivinador</strong>.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <div class="step-text">El Pensador elige una <strong>persona o personaje</strong> en secreto (real o ficticio).</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <div class="step-text">El Adivinador hace preguntas tipo <strong>"¿Café o Té?"</strong> y según la respuesta va descubriendo quién es.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">4</div>
+        <div class="step-text">El Pensador responde siempre con <strong>la opción que más se parece</strong> a su personaje. ¡Sin trampa!</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">5</div>
+        <div class="step-text">Cuando el Adivinador crea saber la respuesta, <strong>¡adivina!</strong> Si falla, sigue jugando.</div>
+      </div>
+
+      <button class="btn btn-primary" style="margin-top:8px" onclick="closeHowToPlay()">¡Entendido!</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Forzar WebSocket puro (necesario para Google Cloud Run)
+    window._socketOptions = { transports: ['websocket'] };
+  </script>
+  <script src="game.js"></script>
+</body>
+</html>
