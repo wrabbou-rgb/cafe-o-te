@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>☕ Café o Té</title>
+  <title id="page-title">☕ Café o Té</title>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -29,6 +29,9 @@
     .lang-btn { background:var(--card); border:1px solid var(--border); color:var(--muted); font-family:'Unbounded',sans-serif; font-size:0.65rem; padding:6px 10px; border-radius:8px; cursor:pointer; transition:all 0.2s; }
     .lang-btn.active { background:var(--accent); color:#0d0b08; border-color:var(--accent); }
     .lang-btn:hover:not(.active) { border-color:var(--accent); color:var(--accent); }
+    .server-btn { background:var(--card); border:1px solid var(--border); color:var(--muted); font-family:'Unbounded',sans-serif; font-size:0.7rem; padding:8px 16px; border-radius:8px; cursor:pointer; transition:all 0.2s; flex:1; }
+    .server-btn.active { background:var(--accent); color:#0d0b08; border-color:var(--accent); }
+    .server-btn:hover:not(.active) { border-color:var(--accent); color:var(--accent); }
 
     .screen { display:none; min-height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; animation:fadeIn 0.4s ease; }
     .screen.active { display:flex; }
@@ -164,11 +167,19 @@
 <!-- PLAY MENU -->
 <div id="screen-play" class="screen">
   <h1 class="logo" style="font-size:2rem;margin-bottom:32px" data-lang="howToPlay2">¿Cómo quieres jugar?</h1>
+  <div style="width:100%;max-width:400px;margin-bottom:16px">
+    <label class="input-label" data-lang="serverLabel">Servidor</label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="server-btn active" data-s="eu" onclick="setServer('eu')">Europa</button>
+      <button class="server-btn" data-s="us" onclick="setServer('us')">America</button>
+      <button class="server-btn" data-s="as" onclick="setServer('as')">Asia</button>
+    </div>
+  </div>
   <div class="menu-grid">
-    <button class="btn btn-primary" onclick="findRandom()" data-lang="quickMatch">🎲 Partida rápida</button>
-    <button class="btn btn-secondary" onclick="createRoom()" data-lang="createRoom">🔒 Crear sala privada</button>
-    <button class="btn btn-secondary" onclick="showJoinRoom()" data-lang="joinRoom">🔑 Unirse con código</button>
-    <button class="btn btn-ghost" onclick="showScreen('screen-home')" data-lang="back">← Volver</button>
+    <button class="btn btn-primary" onclick="findRandom()" data-lang="quickMatch">Partida rapida</button>
+    <button class="btn btn-secondary" onclick="createRoom()" data-lang="createRoom">Crear sala privada</button>
+    <button class="btn btn-secondary" onclick="showJoinRoom()" data-lang="joinRoom">Unirse con codigo</button>
+    <button class="btn btn-ghost" onclick="showScreen('screen-home')" data-lang="back">Volver</button>
   </div>
 </div>
 
@@ -189,7 +200,7 @@
     <div class="players-list" id="players-list"></div>
     <div class="lobby-status" id="lobby-status">Esperando jugadores<span class="waiting-dots"><span></span><span></span><span></span></span></div>
     <button class="btn btn-primary" id="start-game-btn" style="display:none" onclick="startGame()" data-lang="start">¡Empezar!</button>
-    <button class="btn btn-ghost" onclick="leaveLobby()" data-lang="leave">← Salir</button>
+    <button class="btn btn-ghost" onclick="leaveLobby()" data-lang="leave">Salir</button>
   </div>
 </div>
 
@@ -203,7 +214,7 @@
   </div>
   <div class="menu-grid">
     <button class="btn btn-primary" onclick="joinRoom()" data-lang="joinBtn">Unirse</button>
-    <button class="btn btn-ghost" onclick="showScreen('screen-play')" data-lang="back">← Volver</button>
+    <button class="btn btn-ghost" onclick="showScreen('screen-play')" data-lang="back">Volver</button>
   </div>
 </div>
 
@@ -216,12 +227,12 @@
   <div class="game-card">
     <p class="game-role" data-lang="thinkerRole">🧠 Piensa en una persona o personaje</p>
     <div class="thinking-word" id="thinking-word-display">¿En quién estás pensando?</div>
-    <div class="answer-input-row" id="thinking-input-row">
-      <div class="search-wrapper" style="flex:1">
-        <input id="thinking-word-input" class="input-field" type="text" data-lang="thinkingPlaceholder" placeholder="Ej: Shakira, Harry Potter..." oninput="onThinkingInput(event)" autocomplete="off" />
+    <div id="thinking-input-row" style="display:flex;flex-direction:column;gap:12px;margin-top:16px;width:100%">
+      <div class="search-wrapper">
+        <input id="thinking-word-input" class="input-field" type="text" data-lang="thinkingPlaceholder" placeholder="Ej: Shakira, Harry Potter..." oninput="onThinkingInput(event)" autocomplete="off" style="font-size:1.2rem;padding:18px 20px;" />
         <div id="entity-dropdown" class="entity-dropdown"></div>
       </div>
-      <button class="btn btn-primary" style="white-space:nowrap;padding:16px" onclick="submitThinkingWord()" data-lang="ready2">Listo ✓</button>
+      <button class="btn btn-primary" onclick="submitThinkingWord()" data-lang="ready2">Listo</button>
     </div>
     <p id="thinker-waiting" style="display:none;color:var(--muted);margin-top:16px" data-lang="guessingMsg">El otro jugador está adivinando<span class="waiting-dots"><span></span><span></span><span></span></span></p>
 
@@ -229,8 +240,8 @@
       <p style="color:var(--muted);font-size:0.9rem;margin-bottom:12px" data-lang="guessAttemptTitle">El adivinador dice que eres:</p>
       <div id="guess-attempt-display" style="font-family:'Unbounded',sans-serif;font-size:1.5rem;color:var(--accent2);margin-bottom:20px;padding:16px;background:var(--surface);border-radius:12px;"></div>
       <div class="choice-row">
-        <button class="btn btn-coffee" onclick="confirmGuess(true)" style="background:linear-gradient(135deg,#4caf50,#2e7d32)" data-lang="correct">✓ ¡Correcto!</button>
-        <button class="btn btn-tea" onclick="confirmGuess(false)" style="background:linear-gradient(135deg,#f44336,#b71c1c)" data-lang="incorrect">✗ Incorrecto</button>
+        <button class="btn btn-coffee" onclick="confirmGuess(true)" style="background:linear-gradient(135deg,#4caf50,#2e7d32)" data-lang="correct">Correcto</button>
+        <button class="btn btn-tea" onclick="confirmGuess(false)" style="background:linear-gradient(135deg,#f44336,#b71c1c)" data-lang="incorrect">Incorrecto</button>
       </div>
     </div>
 
@@ -272,7 +283,7 @@
         <input id="opt-b-input" class="input-field" style="flex:1;min-width:80px;padding:12px;" type="text" placeholder="Té" />
         <span style="font-family:'Unbounded',sans-serif;font-size:0.9rem">?</span>
       </div>
-      <button class="btn btn-primary" style="width:100%;margin-bottom:16px" onclick="sendQuestion()" data-lang="askBtn">Preguntar →</button>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:16px" onclick="sendQuestion()" data-lang="askBtn">Preguntar</button>
 
       <div class="divider" data-lang="orIfYouKnow">o si ya sabes</div>
       <div style="display:flex;gap:8px">
@@ -316,3 +327,4 @@
 <script src="game.js"></script>
 </body>
 </html>
+
