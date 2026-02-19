@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ===== STATE =====
 const rooms = new Map();      // code -> room
-const matchQueue = [];         // sockets waiting for random match
+const matchQueues = { eu: [], us: [], as: [] }; // per-region queues
 const playerRoom = new Map();  // socketId -> roomCode
 
 // ===== HELPERS =====
@@ -144,14 +144,17 @@ io.on('connection', (socket) => {
   });
 
   // --- FIND RANDOM ---
-  socket.on('find_random', ({ name }) => {
-    // Check if someone already waiting
-    if (matchQueue.length > 0) {
-      const otherSocket = matchQueue.shift();
+  socket.on('find_random', ({ name, server }) => {
+    const region = ['eu','us','as'].includes(server) ? server : 'eu';
+    const queue = matchQueues[region];
+    socket._gameName = name;
+    socket._gameServer = region;
+
+    // Try to find someone in same region
+    if (queue.length > 0) {
+      const otherSocket = queue.shift();
       if (!otherSocket.connected) {
-        // They left, add self to queue
-        matchQueue.push(socket);
-        socket._gameName = name;
+        queue.push(socket);
         return;
       }
       const code = generateCode();
@@ -159,21 +162,20 @@ io.on('connection', (socket) => {
       room.players.push({ id: socket.id, name });
       playerRoom.set(socket.id, code);
       socket.join(code);
-
       otherSocket.emit('matched', { code });
       socket.emit('matched', { code });
-
       startGameInRoom(room, io);
     } else {
-      socket._gameName = name;
-      matchQueue.push(socket);
+      queue.push(socket);
     }
   });
 
   // --- CANCEL MATCHMAKING ---
   socket.on('cancel_matchmaking', () => {
-    const idx = matchQueue.indexOf(socket);
-    if (idx > -1) matchQueue.splice(idx, 1);
+    for (const queue of Object.values(matchQueues)) {
+      const idx = queue.indexOf(socket);
+      if (idx > -1) { queue.splice(idx, 1); break; }
+    }
   });
 
   // --- START GAME (HOST) ---
@@ -260,8 +262,10 @@ io.on('connection', (socket) => {
   // --- DISCONNECT ---
   socket.on('disconnect', () => {
     console.log('Disconnected:', socket.id);
-    const idx = matchQueue.indexOf(socket);
-    if (idx > -1) matchQueue.splice(idx, 1);
+    for (const queue of Object.values(matchQueues)) {
+      const idx = queue.indexOf(socket);
+      if (idx > -1) { queue.splice(idx, 1); break; }
+    }
     leaveRoom(socket, io);
   });
 });
@@ -271,3 +275,4 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`☕ Café o Té server running on http://localhost:${PORT}`);
 });
+
