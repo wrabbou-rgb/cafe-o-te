@@ -224,16 +224,19 @@ io.on('connection', (socket) => {
   });
 
   // --- CONFIRM GUESS (THINKER) ---
-  socket.on('confirm_guess', ({ code, correct }) => {
+  socket.on('confirm_guess', ({ code, correct, word }) => {
     const room = rooms.get(code);
     if (!room || room.thinker !== socket.id) return;
 
-    const thinkerName = room.players.find(p => p.id === room.thinker)?.name;
     const guesserName = room.players.find(p => p.id === room.guesser)?.name;
+    const thinkerName = room.players.find(p => p.id === room.thinker)?.name;
+
+    // Store word in room for reference
+    if (word) room.word = word;
 
     io.to(code).emit('game_over', {
       correct,
-      word: correct ? undefined : '(la palabra del pensador)',
+      word: room.word || word || '???',
       guesserName,
       thinkerName,
       questions: room.history.length,
@@ -275,4 +278,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`☕ Café o Té server running on http://localhost:${PORT}`);
 });
+
 
