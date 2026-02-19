@@ -163,6 +163,29 @@
     /* SENT BUTTON STATE */
     .btn-sent { background: var(--tea) !important; color: #0d0b08 !important; }
     .btn-sending { background: var(--muted) !important; color: var(--bg) !important; cursor:not-allowed !important; }
+
+    /* TURN TIMER */
+    .turn-timer { display:none; font-family:'Unbounded',sans-serif; font-size:0.85rem; color:var(--muted); background:var(--card); border:1px solid var(--border); padding:4px 12px; border-radius:100px; text-align:center; }
+    .turn-timer.urgent { color:#ff6b6b; border-color:#ff6b6b; animation:urgentPulse 0.5s ease infinite alternate; }
+    @keyframes urgentPulse { from{opacity:1;} to{opacity:0.5;} }
+
+    /* QUIT BUTTON */
+    .quit-btn { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:transparent; border:1px solid rgba(255,100,100,0.3); color:rgba(255,100,100,0.6); font-family:'Unbounded',sans-serif; font-size:0.65rem; padding:6px 16px; border-radius:100px; cursor:pointer; transition:all 0.2s; z-index:40; letter-spacing:0.1em; }
+    .quit-btn:hover { border-color:#ff6b6b; color:#ff6b6b; }
+
+    /* QUIT MODAL */
+    .quit-modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:300; padding:24px; }
+    .quit-modal.active { display:flex; }
+    .quit-modal-box { background:var(--card); border:1px solid rgba(255,100,100,0.4); border-radius:20px; padding:36px; max-width:400px; width:100%; text-align:center; }
+    .quit-modal-box h3 { font-family:'Unbounded',sans-serif; font-size:1.1rem; color:#ff6b6b; margin-bottom:12px; }
+    .quit-modal-box p { color:var(--muted); font-size:0.9rem; margin-bottom:24px; line-height:1.5; }
+    .quit-modal-btns { display:flex; gap:12px; }
+
+    /* PENALTY SCREEN */
+    .penalty-card { background:var(--card); border:1px solid rgba(255,100,100,0.4); border-radius:24px; padding:48px 32px; text-align:center; max-width:400px; width:100%; }
+    .penalty-card h2 { font-family:'Unbounded',sans-serif; font-size:1.5rem; color:#ff6b6b; margin-bottom:16px; }
+    .penalty-countdown { font-family:'Unbounded',sans-serif; font-size:4rem; font-weight:900; color:#ff6b6b; margin:24px 0; }
+    .penalty-card p { color:var(--muted); font-size:0.9rem; }
     .opt-a { color:var(--coffee); }
     .opt-b { color:var(--tea); }
   </style>
@@ -252,6 +275,7 @@
 <div id="screen-thinker" class="screen">
   <div class="game-header">
     <div class="round-badge">Ronda <span id="round-num">1</span></div>
+    <div class="turn-timer" id="timer-t"></div>
     <div class="vs-strip">vs <span class="vs-name" id="vs-name-thinker">rival</span></div>
   </div>
   <div class="game-card">
@@ -285,12 +309,14 @@
     </div>
   </div>
   <div class="history-log" id="history-thinker"></div>
+  <button class="quit-btn" onclick="showQuitConfirm()" data-lang="quitBtn">Abandonar</button>
 </div>
 
 <!-- GUESSER -->
 <div id="screen-guesser" class="screen">
   <div class="game-header">
     <div class="round-badge">Ronda <span id="round-num-g">1</span></div>
+    <div class="turn-timer" id="timer-g"></div>
     <div class="vs-strip">vs <span class="vs-name" id="vs-name-guesser">rival</span></div>
   </div>
   <div class="game-card">
@@ -331,6 +357,7 @@
     </div>
   </div>
   <div class="history-log" id="history-guesser"></div>
+  <button class="quit-btn" onclick="showQuitConfirm()" data-lang="quitBtn">Abandonar</button>
 </div>
 
 <!-- RESULT -->
@@ -368,6 +395,28 @@
       <div class="fq-emoji">🍵</div>
       <span class="fq-btn-label" id="fq-label-b">Té</span>
     </button>
+  </div>
+</div>
+
+<!-- QUIT MODAL -->
+<div id="quit-modal" class="quit-modal">
+  <div class="quit-modal-box">
+    <h3 data-lang="quitConfirmTitle">¿Abandonar la partida?</h3>
+    <p data-lang="quitConfirmMsg">Si abandonas repetidamente, recibirás una penalización temporal.</p>
+    <div class="quit-modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeQuitConfirm()" data-lang="quitCancel">Seguir jugando</button>
+      <button class="btn" style="flex:1;background:rgba(255,100,100,0.2);color:#ff6b6b;border:1px solid rgba(255,100,100,0.4)" onclick="confirmQuit()" data-lang="quitBtn">Abandonar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PENALTY SCREEN -->
+<div id="screen-penalty" class="screen">
+  <div class="penalty-card">
+    <h2>⏳</h2>
+    <p data-lang="penaltyMsg">Penalización activa. No puedes jugar durante:</p>
+    <div class="penalty-countdown"><span id="penalty-seconds">0</span>s</div>
+    <p style="color:var(--muted);font-size:0.8rem">La penalización aumenta cada vez que abandonas una partida.</p>
   </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
