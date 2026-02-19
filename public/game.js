@@ -160,7 +160,9 @@ function setLang(l){
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.l===lang));
   // Update page title
   const titleEl = document.getElementById('page-title');
-  if(titleEl) titleEl.textContent = '☕ ' + (titles[l] || 'Café o Té');
+  const titleText = '☕ ' + (titles[l] || 'Café o Té');
+  if(titleEl) titleEl.textContent = titleText;
+  document.title = titleText;
 }
 
 function renderHowSteps(){
@@ -179,10 +181,26 @@ let selectedEntity=null;
 
 async function searchWikipedia(query){
   try{
-    const url=`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=7&namespace=0&format=json&origin=*`;
+    // Use PetScan/Wikidata approach: search with categories filter for people & fictional characters
+    // First get candidates via opensearch
+    const url=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}+incategory:"People"+OR+incategory:"Fictional+characters"+OR+incategory:"Animated+characters"&srlimit=8&format=json&origin=*`;
     const res=await fetch(url);
     const data=await res.json();
-    showDropdown(data[1],query);
+    const titles=(data.query&&data.query.search||[]).map(r=>r.title);
+    if(titles.length>0){ showDropdown(titles,query); return; }
+    // Fallback: broader search but still filtered
+    const url2=`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=8&namespace=0&format=json&origin=*`;
+    const res2=await fetch(url2);
+    const data2=await res2.json();
+    // Filter out obvious non-people results (articles, concepts, places without person indicators)
+    const filtered=(data2[1]||[]).filter(t=>{
+      const lower=t.toLowerCase();
+      // Keep if looks like a name (has space = likely firstname lastname) or known fictional pattern
+      const hasSpace=t.includes(' ');
+      const looksLikeConcept=/^(the |a |an |list of|history of|theory|concept|system|process|method)/i.test(t);
+      return hasSpace && !looksLikeConcept;
+    });
+    showDropdown(filtered.length>0?filtered:data2[1],query);
   }catch(e){ hideDropdown(); }
 }
 
@@ -392,7 +410,7 @@ function showResult(data){
 function playAgain(){socket.emit('play_again',{code:state.roomCode});showToast(t('waitingConfirm'));}
 function backToHome(){socket.emit('leave_room');showScreen('screen-home');}
 function confirmGuess(correct){
-  socket.emit('confirm_guess',{code:state.roomCode,correct});
+  socket.emit('confirm_guess',{code:state.roomCode,correct,word:state.wordChosen});
   document.getElementById('guess-confirm-section').style.display='none';
   document.getElementById('thinker-waiting').style.display='block';
 }
@@ -469,4 +487,5 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrapper'))hideDropdown();});
 
 setLang('es');
+
 
