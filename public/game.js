@@ -5,8 +5,8 @@ const socket = io({ transports: ['websocket'] });
 // ===== TRANSLATIONS =====
 const T = {
   es: {
-    yourName:'Tu nombre',namePlaceholder:'¿Cómo te llamas?',nameError:'Escribe tu nombre para continuar',
-    play:'Jugar ☕',howToPlay:'¿Cómo se juega?',quickMatch:'🎲 Partida rápida (random)',
+    yourName:'Tu apodo',namePlaceholder:'Tu apodo...',nameError:'Escribe tu nombre para continuar',
+    play:'Jugar',howToPlay:'¿Cómo se juega?',quickMatch:'🎲 Partida rápida (random)',
     createRoom:'🔒 Crear sala privada',joinRoom:'🔑 Unirse con código',back:'Volver',
     searching:'Buscando rival',searchingSub:'Te emparejamos con alguien al azar',cancel:'Cancelar',
     roomCode:'Código de sala',tapToCopy:'Toca el código para copiar',waiting:'Esperando jugadores',
@@ -37,8 +37,8 @@ const T = {
     ]
   },
   en: {
-    yourName:'Your name',namePlaceholder:"What's your name?",nameError:'Enter your name to continue',
-    play:'Play ☕',howToPlay:'How to play?',quickMatch:'🎲 Quick match (random)',
+    yourName:'Your nickname',namePlaceholder:'Your nickname...',nameError:'Enter your name to continue',
+    play:'Play',howToPlay:'How to play?',quickMatch:'🎲 Quick match (random)',
     createRoom:'🔒 Create private room',joinRoom:'🔑 Join with code',back:'Back',
     searching:'Finding opponent',searchingSub:"We'll match you with someone random",cancel:'Cancel',
     roomCode:'Room code',tapToCopy:'Tap code to copy',waiting:'Waiting for players',
@@ -68,8 +68,8 @@ const T = {
     ]
   },
   fr: {
-    yourName:'Ton prénom',namePlaceholder:"Comment tu t'appelles ?",nameError:'Écris ton prénom pour continuer',
-    play:'Jouer ☕',howToPlay:'Comment jouer ?',quickMatch:'🎲 Partie rapide (aléatoire)',
+    yourName:'Ton pseudo',namePlaceholder:'Ton pseudo...',nameError:'Écris ton prénom pour continuer',
+    play:'Jouer',howToPlay:'Comment jouer ?',quickMatch:'🎲 Partie rapide (aléatoire)',
     createRoom:'🔒 Créer une salle privée',joinRoom:'🔑 Rejoindre avec un code',back:'Retour',
     searching:"Recherche d'adversaire",searchingSub:'On te trouvera quelqu\'un au hasard',cancel:'Annuler',
     roomCode:'Code de la salle',tapToCopy:'Touche le code pour copier',waiting:'En attente de joueurs',
@@ -99,8 +99,8 @@ const T = {
     ]
   },
   de: {
-    yourName:'Dein Name',namePlaceholder:'Wie heißt du?',nameError:'Schreib deinen Namen um fortzufahren',
-    play:'Spielen ☕',howToPlay:'Wie spielt man?',quickMatch:'🎲 Schnelles Spiel (zufällig)',
+    yourName:'Dein Spitzname',namePlaceholder:'Dein Spitzname...',nameError:'Schreib deinen Namen um fortzufahren',
+    play:'Spielen',howToPlay:'Wie spielt man?',quickMatch:'🎲 Schnelles Spiel (zufällig)',
     createRoom:'🔒 Privaten Raum erstellen',joinRoom:'🔑 Mit Code beitreten',back:'Zurück',
     searching:'Gegner suchen',searchingSub:'Wir suchen jemanden für dich',cancel:'Abbrechen',
     roomCode:'Raumcode',tapToCopy:'Code antippen zum Kopieren',waiting:'Warte auf Spieler',
@@ -135,7 +135,7 @@ let lang = 'es';
 let state = {
   playerName:'',roomCode:'',role:null,wordChosen:'',waitingForAnswer:false,
   gameHistory:[],isHost:false,opponentName:'',round:1,
-  firstAnswerFixed:null,firstQuestion:true,
+  firstAnswerFixed:null,firstQuestion:true,fixedOption:null,
 };
 
 function t(key){ return (T[lang]&&T[lang][key])||T.es[key]||key; }
@@ -187,41 +187,36 @@ let selectedEntity=null;
 
 async function searchWikipedia(query){
   try{
-    // Search Wikidata for humans (Q5) and fictional characters (Q15632617)
-    const sparql=`SELECT DISTINCT ?label WHERE {
-      { ?item wdt:P31 wd:Q5. } UNION { ?item wdt:P31 wd:Q15632617. } UNION { ?item wdt:P31 wd:Q1114461. }
-      ?item rdfs:label ?label.
-      FILTER(LANG(?label)="es" || LANG(?label)="en" || LANG(?label)="fr" || LANG(?label)="de")
-      FILTER(STRSTARTS(LCASE(?label), LCASE("${query}")))
-    } LIMIT 8`;
-    const url=`https://query.wikidata.org/sparql?query=${encodeURIComponent(sparql)}&format=json`;
-    const res=await fetch(url,{headers:{'Accept':'application/sparql-results+json'}});
+    // Use Wikidata entity search - returns people and characters by name prefix
+    const url=`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=${lang}&type=item&limit=12&format=json&origin=*`;
+    const res=await fetch(url);
     const data=await res.json();
-    const results=data.results.bindings.map(b=>b.label.value);
-    if(results.length>0){showDropdown(results,query);return;}
-    // Fallback to Wikipedia opensearch but filtered strictly
-    const url2=`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json&origin=*`;
-    const res2=await fetch(url2);
-    const data2=await res2.json();
-    const filtered=(data2[1]||[]).filter(t=>{
-      // Must look like a name: 2+ words, no generic article patterns
-      const words=t.trim().split(/\s+/);
-      const isConcept=/^(list|history|theory|the |a |an |el |la |los |las |le |les |die |der |das )/i.test(t);
-      const isYear=/^\d{4}/.test(t);
-      const isEvent=/(war|battle|revolution|crisis|disaster|earthquake|election)/i.test(t);
-      return words.length>=2 && !isConcept && !isYear && !isEvent;
-    });
-    showDropdown(filtered,query);
-  }catch(e){
-    // Final fallback: simple opensearch with name filter
-    try{
-      const url=`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=8&namespace=0&format=json&origin=*`;
-      const res=await fetch(url);
-      const data=await res.json();
-      const filtered=(data[1]||[]).filter(t=>t.split(' ').length>=2&&!/^(list|history|the |a )/i.test(t));
-      showDropdown(filtered,query);
-    }catch(e2){hideDropdown();}
-  }
+    // Filter to only humans and fictional characters by checking descriptions
+    const people=(data.search||[]).filter(item=>{
+      const desc=(item.description||'').toLowerCase();
+      const label=(item.label||'').toLowerCase();
+      // Keep if description suggests a person or character
+      const isPerson=desc.includes('human')||desc.includes('person')||desc.includes('actor')||
+        desc.includes('singer')||desc.includes('player')||desc.includes('politician')||
+        desc.includes('musician')||desc.includes('director')||desc.includes('writer')||
+        desc.includes('athlete')||desc.includes('footballer')||desc.includes('artist')||
+        desc.includes('character')||desc.includes('fictional')||desc.includes('personaje')||
+        desc.includes('cantante')||desc.includes('actor')||desc.includes('jugador')||
+        desc.includes('político')||desc.includes('personnage')||desc.includes('chanteur')||
+        desc.includes('sportif')||desc.includes('figur')||desc.includes('sänger')||
+        desc.includes('schauspieler')||desc.includes('sportler');
+      // Exclude obvious non-people
+      const notPerson=desc.includes('municipality')||desc.includes('city')||desc.includes('town')||
+        desc.includes('country')||desc.includes('film')||desc.includes('album')||
+        desc.includes('song')||desc.includes('band')||desc.includes('company')||
+        desc.includes('organization')||desc.includes('disease')||desc.includes('concept');
+      return isPerson && !notPerson;
+    }).map(item=>item.label);
+    if(people.length>0){showDropdown(people,query);return;}
+    // If no filtered results, show unfiltered but limit to items with descriptions
+    const any=(data.search||[]).filter(i=>i.description&&i.label).slice(0,6).map(i=>`${i.label}`);
+    showDropdown(any,query);
+  }catch(e){hideDropdown();}
 }
 
 function showDropdown(titles,query){
@@ -349,7 +344,7 @@ function answerQuestion(choice){
 function initGuesser(data){
   state.role='guesser'; state.opponentName=data.opponentName;
   state.gameHistory=[]; state.waitingForAnswer=false;
-  state.firstAnswerFixed=null; state.firstQuestion=true; state.round=data.round||1;
+  state.firstAnswerFixed=null; state.firstQuestion=true; state.fixedOption=null; state.round=data.round||1;
   document.getElementById('round-num-g').textContent=state.round;
   document.getElementById('vs-name-guesser').textContent=state.opponentName;
   document.getElementById('guesser-waiting').style.display='block';
@@ -373,24 +368,16 @@ function setupFirstQuestion(){
 }
 
 function updateFixedOptionUI(){
-  const last=state.gameHistory[state.gameHistory.length-1];
-  if(!last||!state.firstAnswerFixed) return;
+  if(!state.fixedOption) return;
   const optAInput=document.getElementById('opt-a-input');
   const optBInput=document.getElementById('opt-b-input');
   const fixedRow=document.getElementById('fixed-option-row');
   const fixedLabel=document.getElementById('fixed-option-label');
-
-  if(state.firstAnswerFixed==='A'){
-    // Coffee side fixed
-    optAInput.value=last.optA; optAInput.readOnly=true; optAInput.style.opacity='0.5';
-    optBInput.readOnly=false; optBInput.style.opacity='1'; optBInput.value=''; optBInput.focus();
-    if(fixedRow){fixedRow.style.display='flex'; fixedLabel.textContent=`☕ ${last.optA}`;}
-  } else {
-    // Tea side fixed
-    optBInput.value=last.optB; optBInput.readOnly=true; optBInput.style.opacity='0.5';
-    optAInput.readOnly=false; optAInput.style.opacity='1'; optAInput.value=''; optAInput.focus();
-    if(fixedRow){fixedRow.style.display='flex'; fixedLabel.textContent=`🍵 ${last.optB}`;}
-  }
+  // Fixed option always goes to slot A (left), free option to slot B (right)
+  optAInput.value=state.fixedOption;
+  optAInput.readOnly=true; optAInput.style.opacity='0.5';
+  optBInput.readOnly=false; optBInput.style.opacity='1'; optBInput.value=''; optBInput.focus();
+  if(fixedRow){fixedRow.style.display='flex'; fixedLabel.textContent=state.fixedOption;}
 }
 
 function sendQuestion(){
@@ -466,7 +453,9 @@ socket.on('question_received',data=>{
 
 socket.on('answer_received',data=>{
   state.waitingForAnswer=false;
-  if(state.firstQuestion){state.firstAnswerFixed=data.choice;state.firstQuestion=false;}
+  // The chosen option becomes the new fixed option (always moves to slot A)
+  state.fixedOption = data.choice==='A' ? data.optA : data.optB;
+  state.firstQuestion=false;
   const label=data.choice==='A'?`☕ ${data.optA}`:`🍵 ${data.optB}`;
   document.getElementById('guesser-answer-display').style.display='block';
   document.getElementById('answer-received').textContent=label;
@@ -506,8 +495,4 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrapper'))hideDropdown();});
 
-setLang('es');
-
-
-
-
+document.addEventListener('DOMContentLoaded', () => setLang('es'));
