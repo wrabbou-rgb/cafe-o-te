@@ -7,17 +7,17 @@ const T = {
   es: {
     yourName:'Tu nombre',namePlaceholder:'¿Cómo te llamas?',nameError:'Escribe tu nombre para continuar',
     play:'Jugar ☕',howToPlay:'¿Cómo se juega?',quickMatch:'🎲 Partida rápida (random)',
-    createRoom:'🔒 Crear sala privada',joinRoom:'🔑 Unirse con código',back:'← Volver',
+    createRoom:'🔒 Crear sala privada',joinRoom:'🔑 Unirse con código',back:'Volver',
     searching:'Buscando rival',searchingSub:'Te emparejamos con alguien al azar',cancel:'Cancelar',
     roomCode:'Código de sala',tapToCopy:'Toca el código para copiar',waiting:'Esperando jugadores',
     waitingHost:'Esperando que el anfitrión inicie',ready:'¡Listo para jugar!',start:'¡Empezar!',
-    leave:'← Salir',joinTitle:'Unirse a sala',joinBtn:'Unirse',roomNotFound:'Sala no encontrada',
+    leave:'Salir',joinTitle:'Unirse a sala',joinBtn:'Unirse',roomNotFound:'Sala no encontrada',
     roomFull:'Sala llena',thinkerRole:'🧠 Piensa en una persona o personaje',
     thinkingPrompt:'¿En quién estás pensando?',thinkingPlaceholder:'Ej: Shakira, Harry Potter...',
-    ready2:'Listo ✓',guessingMsg:'El otro jugador está adivinando',
-    guessAttemptTitle:'El adivinador dice que eres:',correct:'✓ ¡Correcto!',incorrect:'✗ Incorrecto',
+    ready2:'Listo',guessingMsg:'El otro jugador está adivinando',
+    guessAttemptTitle:'El adivinador dice que eres:',correct:'Correcto',incorrect:'Incorrecto',
     guesserRole:'🔍 Adivina en quién está pensando',opponentChoosing:'El otro jugador elige su personaje',
-    writeQuestion:'Escribe tu pregunta:',askBtn:'Preguntar →',orIfYouKnow:'o si ya sabes',
+    writeQuestion:'Escribe tu pregunta:',askBtn:'Preguntar',orIfYouKnow:'o si ya sabes',
     guessPlaceholder:'Mi respuesta es...',guessBtn:'¡Adivinar!',
     waitError:'Espera la respuesta antes de preguntar de nuevo',answerLabel:'Respuesta:',
     nextQuestion:'Ahora haz otra pregunta',won:'¡Lo adivinaste!',lost:'Se acabó',
@@ -26,7 +26,7 @@ const T = {
     wrongGuess:'❌ ¡Incorrecto! Sigue preguntando',opponentLeft:'El rival abandonó la partida 😞',
     writeBothOptions:'Escribe las dos opciones',waitingConfirm:'Esperando que el rival confirme...',
     howTitle:'☕ ¿Cómo se juega?',howOk:'¡Entendido!',searchingEntity:'Buscando...',
-    noResults:'Sin resultados, escribe tú mismo',fixedOption:'Opción fija:',tagline:'el juego de asociación mental más viral',
+    noResults:'Sin resultados, escribe tú mismo',fixedOption:'Opción fija:',serverLabel:'Servidor',tagline:'el juego de asociación mental más viral',
     howToPlay2:'¿Cómo quieres jugar?',
     howSteps:[
       ["Zwei Spieler verbinden sich. Einer ist der ","Denker"," (wählt heimlich eine Figur) und der andere der ","Rater"," (stellt Fragen)."],
@@ -39,17 +39,17 @@ const T = {
   en: {
     yourName:'Your name',namePlaceholder:"What's your name?",nameError:'Enter your name to continue',
     play:'Play ☕',howToPlay:'How to play?',quickMatch:'🎲 Quick match (random)',
-    createRoom:'🔒 Create private room',joinRoom:'🔑 Join with code',back:'← Back',
+    createRoom:'🔒 Create private room',joinRoom:'🔑 Join with code',back:'Back',
     searching:'Finding opponent',searchingSub:"We'll match you with someone random",cancel:'Cancel',
     roomCode:'Room code',tapToCopy:'Tap code to copy',waiting:'Waiting for players',
     waitingHost:'Waiting for host to start',ready:'Ready to play!',start:'Start!',
-    leave:'← Leave',joinTitle:'Join room',joinBtn:'Join',roomNotFound:'Room not found',
+    leave:'Leave',joinTitle:'Join room',joinBtn:'Join',roomNotFound:'Room not found',
     roomFull:'Room is full',thinkerRole:'🧠 Think of a person or character',
     thinkingPrompt:'Who are you thinking of?',thinkingPlaceholder:'E.g.: Shakira, Harry Potter...',
-    ready2:'Ready ✓',guessingMsg:'Other player is guessing',guessAttemptTitle:'The guesser thinks you are:',
-    correct:'✓ Correct!',incorrect:'✗ Wrong',guesserRole:"🔍 Guess who they're thinking of",
+    ready2:'Ready',guessingMsg:'Other player is guessing',guessAttemptTitle:'The guesser thinks you are:',
+    correct:'Correct',incorrect:'Wrong',guesserRole:"🔍 Guess who they're thinking of",
     opponentChoosing:'Other player is choosing their character',writeQuestion:'Write your question:',
-    askBtn:'Ask →',orIfYouKnow:'or if you already know',guessPlaceholder:'My answer is...',
+    askBtn:'Ask',orIfYouKnow:'or if you already know',guessPlaceholder:'My answer is...',
     guessBtn:'Guess!',waitError:'Wait for the answer before asking again',answerLabel:'Answer:',
     nextQuestion:'Now ask another question',won:'You guessed it!',lost:'Game over',
     playAgain:'Play again',home:'Home',host:'★ Host',codeCopied:'Code copied ✓',
@@ -57,7 +57,7 @@ const T = {
     wrongGuess:'❌ Wrong! Keep asking',opponentLeft:'Opponent left the game 😞',
     writeBothOptions:'Write both options',waitingConfirm:'Waiting for opponent to confirm...',
     howTitle:'☕ How to play?',howOk:'Got it!',searchingEntity:'Searching...',
-    noResults:'No results, type yourself',fixedOption:'Fixed option:',tagline:'the most viral mental association game',
+    noResults:'No results, type yourself',fixedOption:'Fixed option:',serverLabel:'Server',tagline:'the most viral mental association game',
     howToPlay2:'How do you want to play?',
     howSteps:[
       ['Two players connect. One is the ','Thinker',' and the other the ','Guesser.'],
@@ -70,17 +70,17 @@ const T = {
   fr: {
     yourName:'Ton prénom',namePlaceholder:"Comment tu t'appelles ?",nameError:'Écris ton prénom pour continuer',
     play:'Jouer ☕',howToPlay:'Comment jouer ?',quickMatch:'🎲 Partie rapide (aléatoire)',
-    createRoom:'🔒 Créer une salle privée',joinRoom:'🔑 Rejoindre avec un code',back:'← Retour',
+    createRoom:'🔒 Créer une salle privée',joinRoom:'🔑 Rejoindre avec un code',back:'Retour',
     searching:"Recherche d'adversaire",searchingSub:'On te trouvera quelqu\'un au hasard',cancel:'Annuler',
     roomCode:'Code de la salle',tapToCopy:'Touche le code pour copier',waiting:'En attente de joueurs',
     waitingHost:"En attente que l'hôte démarre",ready:'Prêt à jouer !',start:'Commencer !',
-    leave:'← Quitter',joinTitle:'Rejoindre une salle',joinBtn:'Rejoindre',roomNotFound:'Salle introuvable',
+    leave:'Quitter',joinTitle:'Rejoindre une salle',joinBtn:'Rejoindre',roomNotFound:'Salle introuvable',
     roomFull:'Salle complète',thinkerRole:'🧠 Pense à une personne ou un personnage',
     thinkingPrompt:'À qui tu penses ?',thinkingPlaceholder:'Ex : Shakira, Harry Potter...',
-    ready2:'Prêt ✓',guessingMsg:"L'autre joueur devine",guessAttemptTitle:'Le devineur pense que tu es :',
-    correct:'✓ Correct !',incorrect:'✗ Incorrect',guesserRole:'🔍 Devine à qui il pense',
+    ready2:'Prêt',guessingMsg:"L'autre joueur devine",guessAttemptTitle:'Le devineur pense que tu es :',
+    correct:'Correct',incorrect:'Incorrect',guesserRole:'🔍 Devine à qui il pense',
     opponentChoosing:"L'autre joueur choisit son personnage",writeQuestion:'Écris ta question :',
-    askBtn:'Demander →',orIfYouKnow:'ou si tu sais déjà',guessPlaceholder:'Ma réponse est...',
+    askBtn:'Demander',orIfYouKnow:'ou si tu sais déjà',guessPlaceholder:'Ma réponse est...',
     guessBtn:'Deviner !',waitError:"Attends la réponse avant de poser une autre question",answerLabel:'Réponse :',
     nextQuestion:'Pose une autre question',won:"Tu l'as deviné !",lost:'Fin de partie',
     playAgain:'Rejouer',home:'Accueil',host:'★ Hôte',codeCopied:'Code copié ✓',
@@ -88,7 +88,7 @@ const T = {
     wrongGuess:'❌ Faux ! Continue à demander',opponentLeft:"L'adversaire a quitté 😞",
     writeBothOptions:'Écris les deux options',waitingConfirm:'En attente de confirmation...',
     howTitle:'☕ Comment jouer ?',howOk:'Compris !',searchingEntity:'Recherche...',
-    noResults:'Pas de résultats, écris toi-même',fixedOption:'Option fixe :',tagline:'le jeu d\'association mentale le plus viral',
+    noResults:'Pas de résultats, écris toi-même',fixedOption:'Option fixe :',serverLabel:'Serveur',tagline:'le jeu d\'association mentale le plus viral',
     howToPlay2:'Comment veux-tu jouer ?',
     howSteps:[
       ["Deux joueurs se connectent. L'un est le ","Penseur"," et l'autre le ","Devineur."],
@@ -101,17 +101,17 @@ const T = {
   de: {
     yourName:'Dein Name',namePlaceholder:'Wie heißt du?',nameError:'Schreib deinen Namen um fortzufahren',
     play:'Spielen ☕',howToPlay:'Wie spielt man?',quickMatch:'🎲 Schnelles Spiel (zufällig)',
-    createRoom:'🔒 Privaten Raum erstellen',joinRoom:'🔑 Mit Code beitreten',back:'← Zurück',
+    createRoom:'🔒 Privaten Raum erstellen',joinRoom:'🔑 Mit Code beitreten',back:'Zurück',
     searching:'Gegner suchen',searchingSub:'Wir suchen jemanden für dich',cancel:'Abbrechen',
     roomCode:'Raumcode',tapToCopy:'Code antippen zum Kopieren',waiting:'Warte auf Spieler',
     waitingHost:'Warte auf den Gastgeber',ready:'Bereit zum Spielen!',start:'Starten!',
-    leave:'← Verlassen',joinTitle:'Raum beitreten',joinBtn:'Beitreten',roomNotFound:'Raum nicht gefunden',
+    leave:'Verlassen',joinTitle:'Raum beitreten',joinBtn:'Beitreten',roomNotFound:'Raum nicht gefunden',
     roomFull:'Raum ist voll',thinkerRole:'🧠 Denk an eine Person oder Figur',
     thinkingPrompt:'An wen denkst du?',thinkingPlaceholder:'Z.B.: Shakira, Harry Potter...',
-    ready2:'Fertig ✓',guessingMsg:'Der andere Spieler rät',guessAttemptTitle:'Der Rater denkt du bist:',
-    correct:'✓ Richtig!',incorrect:'✗ Falsch',guesserRole:'🔍 Rate an wen er denkt',
+    ready2:'Fertig',guessingMsg:'Der andere Spieler rät',guessAttemptTitle:'Der Rater denkt du bist:',
+    correct:'Richtig',incorrect:'Falsch',guesserRole:'🔍 Rate an wen er denkt',
     opponentChoosing:'Der andere Spieler wählt seine Figur',writeQuestion:'Schreib deine Frage:',
-    askBtn:'Fragen →',orIfYouKnow:'oder wenn du es weißt',guessPlaceholder:'Meine Antwort ist...',
+    askBtn:'Fragen',orIfYouKnow:'oder wenn du es weißt',guessPlaceholder:'Meine Antwort ist...',
     guessBtn:'Raten!',waitError:'Warte auf die Antwort bevor du erneut fragst',answerLabel:'Antwort:',
     nextQuestion:'Stelle jetzt eine weitere Frage',won:'Du hast es erraten!',lost:'Spiel vorbei',
     playAgain:'Nochmal spielen',home:'Startseite',host:'★ Gastgeber',codeCopied:'Code kopiert ✓',
@@ -119,7 +119,7 @@ const T = {
     wrongGuess:'❌ Falsch! Weiter fragen',opponentLeft:'Gegner hat das Spiel verlassen 😞',
     writeBothOptions:'Schreib beide Optionen',waitingConfirm:'Warte auf Bestätigung...',
     howTitle:'☕ Wie spielt man?',howOk:'Verstanden!',searchingEntity:'Suche...',
-    noResults:'Keine Ergebnisse, selbst eingeben',fixedOption:'Feste Option:',tagline:'das viralste mentale Assoziationsspiel',
+    noResults:'Keine Ergebnisse, selbst eingeben',fixedOption:'Feste Option:',serverLabel:'Server',tagline:'das viralste mentale Assoziationsspiel',
     howToPlay2:'Wie möchtest du spielen?',
     howSteps:[
       ['Zwei Spieler verbinden sich. Einer ist der ','Denker',' und der andere der ','Rater.'],
@@ -140,6 +140,16 @@ let state = {
 
 function t(key){ return (T[lang]&&T[lang][key])||T.es[key]||key; }
 
+
+// ===== SERVER SELECTION =====
+let selectedServer = 'eu';
+function setServer(s) {
+  selectedServer = s;
+  document.querySelectorAll('.server-btn').forEach(b => b.classList.toggle('active', b.dataset.s === s));
+}
+
+// ===== TITLE TRANSLATIONS =====
+const titles = { es:'Café o Té', en:'Coffee or Tea', fr:'Café ou Thé', de:'Kaffee oder Tee' };
 function setLang(l){
   lang=l;
   document.querySelectorAll('[data-lang]').forEach(el=>{
@@ -148,6 +158,9 @@ function setLang(l){
   });
   renderHowSteps();
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.l===lang));
+  // Update page title
+  const titleEl = document.getElementById('page-title');
+  if(titleEl) titleEl.textContent = '☕ ' + (titles[l] || 'Café o Té');
 }
 
 function renderHowSteps(){
@@ -229,7 +242,7 @@ function goToPlay(){
 
 function showHowToPlay(){renderHowSteps();document.getElementById('modal-howto').classList.add('active');}
 function closeHowToPlay(){document.getElementById('modal-howto').classList.remove('active');}
-function findRandom(){showScreen('screen-matchmaking');socket.emit('find_random',{name:state.playerName});}
+function findRandom(){showScreen('screen-matchmaking');socket.emit('find_random',{name:state.playerName,server:selectedServer});}
 function cancelMatchmaking(){socket.emit('cancel_matchmaking');showScreen('screen-play');}
 function createRoom(){socket.emit('create_room',{name:state.playerName});}
 function showJoinRoom(){document.getElementById('join-code').value='';document.getElementById('join-error').style.display='none';showScreen('screen-join');}
@@ -456,3 +469,4 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrapper'))hideDropdown();});
 
 setLang('es');
+
