@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Snake Pro: Explosive Evolution</title>
+    <style>
+        body { background: #0a0a0c; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .stats { background: #1a1a22; padding: 15px 30px; border-radius: 50px; margin-bottom: 10px; display: flex; gap: 30px; border: 1px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        #score { font-weight: bold; color: #4CAF50; font-size: 1.2rem; }
+        #highScore { font-weight: bold; color: #FFD700; font-size: 1.2rem; }
+        canvas { background: #000; border: 4px solid #333; transition: background-color 0.1s; }
+        #status { height: 25px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; color: #4CAF50; }
+        .danger { color: #ff4444 !important; }
+        .info { margin-top: 15px; color: #555; font-size: 0.85rem; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="stats">
+        <div>Puntos: <span id="score">0</span></div>
+        <div>🏆 Récord: <span id="highScore">0</span></div>
+        <div>R: Reiniciar | Espacio: Pausa</div>
+    </div>
+
+    <div id="status">PULSA UNA FLECHA</div>
+    <canvas id="snakeCanvas" width="400" height="400"></canvas>
+
+    <div class="info">
+        🍎 +1 (x2 con 💉) | 💉 Rainbow Speed | 💣 <span style="color:#ff4444">¡BOOM!</span> (Aparecen más según tu score)
+    </div>
+
+    <script>
+        const canvas = document.getElementById("snakeCanvas");
+        const ctx = canvas.getContext("2d");
+        const GRID = 16;
+        const TILE = canvas.width / GRID;
+
+        let snake, food, syringe, bombs, score, gameOver, isPaused, rainbow, lastTime;
+        let currentDir, nextDir;
+        let highScore = 0;
+
+        function reset() {
+            snake = [{x: 8, y: 8}];
+            food = {x: 12, y: 8};
+            syringe = null;
+            bombs = [];
+            currentDir = {x: 0, y: 0};
+            nextDir = {x: 0, y: 0};
+            score = 0;
+            gameOver = false;
+            isPaused = false;
+            rainbow = false;
+            lastTime = 0;
+            document.getElementById("score").innerText = "0";
+            document.getElementById("highScore").innerText = highScore;
+            document.getElementById("status").innerText = "PULSA UNA FLECHA";
+            document.getElementById("status").className = "";
+            canvas.style.backgroundColor = "black";
+        }
+
+        window.addEventListener("keydown", e => {
+            if (e.code === "KeyR") reset();
+            if (e.code === "Space") {
+                isPaused = !isPaused;
+                return;
+            }
+
+            const moves = {
+                ArrowLeft:  {x: -1, y: 0},
+                ArrowUp:    {x: 0, y: -1},
+                ArrowRight: {x: 1, y: 0},
+                ArrowDown:  {x: 0, y: 1}
+            };
+
+            const wish = moves[e.code];
+            if (wish) {
+                e.preventDefault();
+                if (wish.x !== -currentDir.x || wish.y !== -currentDir.y) {
+                    nextDir = wish;
+                }
+            }
+        });
+
+        function spawn(type) {
+            let pos;
+            while (true) {
+                pos = { x: Math.floor(Math.random() * GRID), y: Math.floor(Math.random() * GRID) };
+                const occupied = snake.some(p => p.x === pos.x && p.y === pos.y) ||
+                                 (food && food.x === pos.x && food.y === pos.y) ||
+                                 bombs.some(b => b.x === pos.x && b.y === pos.y);
+                if (!occupied) break;
+            }
+            
+            if (type === 'food') food = pos;
+            if (type === 'syringe') syringe = pos;
+            if (type === 'bomb') {
+                bombs.push({
+                    x: pos.x, 
+                    y: pos.y, 
+                    timer: Date.now() + 5000 + Math.random() * 3000
+                });
+            }
+        }
+
+        function updateHighScore() {
+            if (score > highScore) {
+                highScore = score;
+                document.getElementById("highScore").innerText = highScore;
+            }
+        }
+
+        function update(time) {
+            if (gameOver) {
+                draw();
+                requestAnimationFrame(update);
+                return;
+            }
+
+            if (!lastTime) lastTime = time;
+            const speed = rainbow ? 80 : 130;
+
+            if (time - lastTime > speed) {
+                if (!isPaused) {
+                    if (nextDir.x !== 0 || nextDir.y !== 0) currentDir = nextDir;
+
+                    if (currentDir.x !== 0 || currentDir.y !== 0) {
+                        const head = { x: snake[0].x + currentDir.x, y: snake[0].y + currentDir.y };
+
+                        // Limpiar bombas caducadas y crear explosiones
+                        bombs.forEach(b => {
+                            if (Date.now() >= b.timer) {
+                                explosions.push({
+                                    x: b.x,
+                                    y: b.y,
+                                    time: Date.now()
+                                });
+                            }
+                        });
+                        bombs = bombs.filter(b => Date.now() < b.timer);
+
+                        if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID ||
+                            snake.some(p => p.x === head.x && p.y === head.y)) {
+                            gameOver = true;
+                            updateHighScore();
+                            document.getElementById("status").innerText = "GAME OVER";
+                            document.getElementById("status").className = "danger";
+                        } 
+                        else if (bombs.some(b => b.x === head.x && b.y === head.y)) {
+                            snake.unshift(head);
+                            gameOver = true;
+                            updateHighScore();
+                            canvas.style.backgroundColor = "#ff4444";
+                            document.getElementById("status").innerText = "¡BOOOOOM!";
+                            document.getElementById("status").className = "danger";
+                        } 
+                        else {
+                            snake.unshift(head);
+                            if (head.x === food.x && head.y === food.y) {
+                                // Si está en modo rainbow, las manzanas valen x2
+                                const points = rainbow ? 2 : 1;
+                                score += points;
+                                document.getElementById("score").innerText = score;
+                                spawn('food');
+                                
+                                const maxBombs = Math.floor(score / 5) + 1;
+                                if (bombs.length < maxBombs && Math.random() < (0.2 + (score * 0.02))) {
+                                    spawn('bomb');
+                                }
+
+                                if (score === 10) spawn('syringe');
+                            } 
+                            else if (syringe && head.x === syringe.x && head.y === syringe.y) {
+                                rainbow = true;
+                                syringe = null;
+                                setTimeout(() => { rainbow = false; }, 8000);
+                            } else {
+                                snake.pop();
+                            }
+                        }
+                    }
+                }
+                lastTime = time;
+            }
+
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function draw() {
+            if (!gameOver) ctx.fillStyle = "black";
+            else ctx.fillStyle = canvas.style.backgroundColor;
+            
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = "#111";
+            for(let i=0; i<canvas.width; i+=TILE) {
+                ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,400); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(400,i); ctx.stroke();
+            }
+
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            const offset = TILE / 2;
+
+            if (food) ctx.fillText("🍎", food.x * TILE + offset, food.y * TILE + offset);
+            if (syringe) ctx.fillText("💉", syringe.x * TILE + offset, syringe.y * TILE + offset);
+            
+            bombs.forEach(b => {
+                const timeLeft = b.timer - Date.now();
+                const shake = timeLeft < 2000 ? Math.sin(Date.now() / 20) * 3 : Math.sin(Date.now() / 50) * 1.5;
+                ctx.fillText("💣", b.x * TILE + offset + shake, b.y * TILE + offset + shake);
+            });
+
+            // Dibujar explosiones (duran 1 segundo)
+            explosions = explosions.filter(exp => Date.now() - exp.time < 1000);
+            explosions.forEach(exp => {
+                const age = Date.now() - exp.time;
+                const scale = 1 + (age / 500); // Se agranda con el tiempo
+                const opacity = 1 - (age / 1000); // Se desvanece
+                ctx.save();
+                ctx.globalAlpha = opacity;
+                ctx.font = `${20 * scale}px Arial`;
+                ctx.fillText("💥", exp.x * TILE + offset, exp.y * TILE + offset);
+                ctx.restore();
+            });
+            ctx.font = "20px Arial"; // Restaurar tamaño normal
+
+            snake.forEach((p, i) => {
+                if (rainbow) {
+                    ctx.fillStyle = `hsl(${(Date.now()/5 + i*20)%360}, 100%, 50%)`;
+                } else {
+                    ctx.fillStyle = (i === 0) ? "#4CAF50" : "#2E7D32";
+                }
+                ctx.fillRect(p.x * TILE + 1, p.y * TILE + 1, TILE - 2, TILE - 2);
+            });
+
+            if (isPaused) {
+                ctx.fillStyle = "rgba(0,0,0,0.6)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+                ctx.fillText("PAUSA", 200, 200);
+            }
+        }
+
+        reset();
+        requestAnimationFrame(update);
+    </script>
+</body>
+</html>
