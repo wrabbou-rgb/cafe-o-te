@@ -165,12 +165,12 @@
     .btn-sending { background: var(--muted) !important; color: var(--bg) !important; cursor:not-allowed !important; }
 
     /* TURN TIMER */
-    .turn-timer { display:none; font-family:'Unbounded',sans-serif; font-size:0.85rem; color:var(--muted); background:var(--card); border:1px solid var(--border); padding:4px 12px; border-radius:100px; text-align:center; }
+    .turn-timer { display:none; font-family:'Unbounded',sans-serif; font-size:0.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); padding:4px 14px; border-radius:100px; text-align:center; align-items:center; justify-content:center; min-width:52px; }
     .turn-timer.urgent { color:#ff6b6b; border-color:#ff6b6b; animation:urgentPulse 0.5s ease infinite alternate; }
     @keyframes urgentPulse { from{opacity:1;} to{opacity:0.5;} }
 
     /* QUIT BUTTON */
-    .quit-btn { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:transparent; border:1px solid rgba(255,100,100,0.3); color:rgba(255,100,100,0.6); font-family:'Unbounded',sans-serif; font-size:0.65rem; padding:6px 16px; border-radius:100px; cursor:pointer; transition:all 0.2s; z-index:40; letter-spacing:0.1em; }
+    .quit-btn { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:rgba(13,11,8,0.8); border:1px solid rgba(255,100,100,0.4); color:rgba(255,100,100,0.8); font-family:'Unbounded',sans-serif; font-size:0.7rem; padding:8px 20px; border-radius:100px; cursor:pointer; transition:all 0.2s; z-index:100; letter-spacing:0.1em; white-space:nowrap; }
     .quit-btn:hover { border-color:#ff6b6b; color:#ff6b6b; }
 
     /* QUIT MODAL */
@@ -340,6 +340,7 @@
         <input id="opt-b-input" class="input-field" style="flex:1;min-width:80px;padding:12px;" type="text" placeholder="Té" />
         <span style="font-family:'Unbounded',sans-serif;font-size:0.9rem">?</span>
       </div>
+      <p id="free-input-hint" style="display:none;color:var(--accent);font-size:0.78rem;margin-bottom:8px;margin-top:-8px" data-lang="freeInputHint">Escribe algo relacionado con el personaje...</p>
       <button class="btn btn-primary" id="ask-btn" style="width:100%;margin-bottom:16px" onclick="sendQuestion()" data-lang="askBtn">Preguntar</button>
 
       <div class="divider" data-lang="orIfYouKnow">o si ya sabes</div>
