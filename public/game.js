@@ -276,10 +276,16 @@ function setLang(l){
   document.title = titleText;
   const logoEl = document.getElementById('main-logo');
   if(logoEl) {
-    const parts = titleText.split(' o ').length > 1 ? titleText.split(' o ') : titleText.split(' or ').length > 1 ? titleText.split(' or ') : titleText.split(' ou ').length > 1 ? titleText.split(' ou ') : titleText.split(' oder ');
-    const sep = titleText.includes(' oder ') ? ' oder ' : titleText.includes(' ou ') ? ' ou ' : titleText.includes(' or ') ? ' or ' : ' o ';
-    if(parts.length >= 2) {
-      logoEl.innerHTML = `<span style="color:#f5a623">${parts[0]}</span> ${sep.trim()} <span style="color:#8bc34a">${parts[1]}</span>`;
+    // Separators for each language
+    const seps = [' или ', ' 还是 ', ' oder ', ' ou ', ' or ', ' o '];
+    let sep = null, parts = null;
+    for(const s of seps) {
+      if(titleText.includes(s)) { sep = s; parts = titleText.split(s); break; }
+    }
+    if(parts && parts.length >= 2) {
+      logoEl.innerHTML = `<span style="color:#f5a623">${parts[0]}</span><span style="color:var(--muted);font-size:0.7em"> ${sep.trim()} </span><span style="color:#8bc34a">${parts[1]}</span>`;
+    } else {
+      logoEl.textContent = titleText;
     }
   }
 }
