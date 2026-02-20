@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ===== STATE =====
 const rooms = new Map();
 const playerRoom = new Map();
-const matchQueues = { eu: [], us: [], as: [] };
+const matchQueues = {}; // keyed by 'region_lang' e.g. 'eu_es', 'us_en'
 
 // Penalty tracking: clientId (persistent) -> { quits, penaltyUntil }
 const penalties = new Map();
@@ -202,13 +202,17 @@ io.on('connection', (socket) => {
   });
 
   // --- FIND RANDOM ---
-  socket.on('find_random', ({ name, server }) => {
+  socket.on('find_random', ({ name, server, lang }) => {
     const pen = checkPenalty(socket.id);
     if (pen > 0) { socket.emit('penalty_active', { seconds: pen }); return; }
     const region = ['eu','us','as'].includes(server) ? server : 'eu';
-    const queue = matchQueues[region];
+    const language = ['es','en','fr','de','pt','ru','zh'].includes(lang) ? lang : 'es';
+    const queueKey = `${region}_${language}`;
+    if (!matchQueues[queueKey]) matchQueues[queueKey] = [];
+    const queue = matchQueues[queueKey];
     socket._gameName = name;
     socket._gameServer = region;
+    socket._gameLang = language;
     if (queue.length > 0) {
       const otherSocket = queue.shift();
       if (!otherSocket.connected) { queue.push(socket); return; }
