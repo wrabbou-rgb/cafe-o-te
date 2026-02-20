@@ -29,11 +29,11 @@ const T = {
     noResults:'Sin resultados, escribe tú mismo',fixedOption:'Opción fija:',serverLabel:'Servidor',firstQTitle:'Primera pregunta',fqCoffee:'Café',fqTea:'Té',questionSent:'Enviada...',freeInputHint:'Escribe algo relacionado con el personaje...',opponentFirstQ:'El pensador está eligiendo',tagline:'el juego de asociación mental más viral',
     howToPlay2:'¿Cómo quieres jugar?',
     howSteps:[
-      ["Zwei Spieler verbinden sich. Einer ist der ","Denker"," (wählt heimlich eine Figur) und der andere der ","Rater"," (stellt Fragen)."],
-      ["Der Denker kann jede ","echte Person, fiktive Figur oder Prominente"," wählen. Zum Beispiel: Shakira, Harry Potter, Albert Einstein..."],
-      ["Die erste Frage ist IMMER ","Kaffee oder Tee?",". Wenn der Denker Kaffee sagt, bleibt diese Option ","FEST für das gesamte Spiel",". Der Rater kann nur den anderen Begriff ändern."],
-      ["Beispiel: War die Antwort Kaffee, könnte die nächste Frage ","Kaffee oder Strand?"," sein, dann ","Kaffee oder Nacht?",", usw. Kaffee bleibt immer fest."],
-      ["Wenn der Rater glaubt zu wissen wer es ist, schreibt er seine Antwort. Der Denker bestätigt ","✓ Richtig"," oder ","✗ Falsch",". Bei Fehler weiterspielen!"],
+      ["Dos jugadores se conectan. Uno es el ","Pensador"," (elige un personaje en secreto) y el otro el ","Adivinador"," (hace preguntas)."],
+      ["El Pensador puede elegir cualquier ","persona real, personaje ficticio o famoso",". Por ejemplo: Shakira, Harry Potter, Cristiano Ronaldo..."],
+      ["La primera pregunta es SIEMPRE ","¿Café o Té?"," La opción elegida queda ","FIJA para toda la partida",". El Adivinador solo puede cambiar el otro término."],
+      ["Ejemplo: Si la respuesta fue Café, la siguiente podría ser ","¿Café o Playa?"," luego ","¿Café o Noche?",", etc. Café siempre permanece fijo."],
+      ["Cuando el Adivinador crea saber quién es, escribe su respuesta. El Pensador confirma ","Correcto"," o ","Incorrecto",". ¡Si falla, sigue preguntando!"],
     ]
   },
   en: {
@@ -557,8 +557,15 @@ socket.on('question_received',data=>{
   document.getElementById('answer-section').style.display='block';
   startClientTimer(45);
   document.getElementById('current-question-thinker').innerHTML=`¿<span class="opt-a">${data.optA}</span> o <span class="opt-b">${data.optB}</span>?`;
-  document.getElementById('opt-a-label').textContent=data.optA;
-  document.getElementById('opt-b-label').textContent=data.optB;
+  const btnA=document.querySelector('[onclick="answerQuestion(\'A\')"]');
+  const btnB=document.querySelector('[onclick="answerQuestion(\'B\')"]');
+  if(btnA) btnA.innerHTML=`<span id="opt-a-label">${data.optA}</span>`;
+  if(btnB) btnB.innerHTML=`<span id="opt-b-label">${data.optB}</span>`;
+  // Remove emoji icons after first question (they're only for first choice overlay)
+  if(!state.firstQuestion){
+    document.querySelector('#opt-a-label').closest('button').childNodes[0].textContent='';
+    document.querySelector('#opt-b-label').closest('button').childNodes[0].textContent='';
+  }
 });
 
 socket.on('first_choice_made',(data)=>{
@@ -653,5 +660,12 @@ document.addEventListener('click',e=>{if(!e.target.closest('.search-wrapper'))hi
 
 document.addEventListener('DOMContentLoaded', () => {
   setLang('es');
+  // Generate persistent clientId stored in localStorage
+  let clientId = localStorage.getItem('cot_client_id');
+  if (!clientId) {
+    clientId = 'cid_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('cot_client_id', clientId);
+  }
+  socket.emit('register_client', { clientId });
   socket.emit('check_penalty');
 });
