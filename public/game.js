@@ -98,6 +98,114 @@ const T = {
       ["Quand le Devineur pense savoir, ","il devine !"," S'il se trompe, on continue."],
     ]
   },
+  pt: {
+    yourName:'Seu apelido',namePlaceholder:'Seu apelido...',nameError:'Escreve seu nome para continuar',
+    play:'Jogar',howToPlay:'Como se joga?',quickMatch:'🎲 Partida rápida (aleatório)',
+    createRoom:'🔒 Criar sala privada',joinRoom:'🔑 Entrar com código',back:'Voltar',
+    searching:'Procurando rival',searchingSub:'Vamos te emparelhar com alguém',cancel:'Cancelar',
+    roomCode:'Código da sala',tapToCopy:'Toca o código para copiar',waiting:'Aguardando jogadores',
+    waitingHost:'Aguardando o anfitrião iniciar',ready:'Pronto para jogar!',start:'Começar!',
+    leave:'Sair',joinTitle:'Entrar na sala',joinBtn:'Entrar',roomNotFound:'Sala não encontrada',
+    roomFull:'Sala cheia',thinkerRole:'🧠 Pensa numa pessoa ou personagem',
+    thinkingPrompt:'Em quem estás a pensar?',thinkingPlaceholder:'Ex: Shakira, Harry Potter...',
+    ready2:'Pronto',guessingMsg:'O outro jogador está adivinhando',guessAttemptTitle:'O adivinhador acha que és:',
+    correct:'Correto',incorrect:'Incorreto',guesserRole:'🔍 Adivinha em quem ele pensa',
+    opponentChoosing:'O outro jogador escolhe o personagem',writeQuestion:'Escreve a tua pergunta:',
+    askBtn:'Perguntar',orIfYouKnow:'ou se já sabes',guessPlaceholder:'Minha resposta é...',
+    guessBtn:'Adivinhar!',waitError:'Espera a resposta antes de perguntar novamente',answerLabel:'Resposta:',
+    nextQuestion:'Agora faz outra pergunta',won:'Adivinhaste!',lost:'Acabou',
+    playAgain:'Jogar outra vez',home:'Início',host:'★ Anfitrião',codeCopied:'Código copiado ✓',
+    thinkerChose:'O pensador escolheu! Primeira pergunta: ☕ Café ou 🍵 Chá',
+    wrongGuess:'❌ Errado! Continua perguntando',opponentLeft:'O rival abandonou',opponentTimeout:'O rival não responde.',
+    quitConfirmTitle:'Abandonar a partida?',quitConfirmMsg:'Abandonar repetidamente resulta em penalização.',
+    quitBtn:'Abandonar',quitCancel:'Continuar jogando',penaltyMsg:'Penalização: não podes jogar durante',
+    penaltyUnit:'segundos',timeLeft:'Tempo restante:',writeBothOptions:'Escreve as duas opções',
+    waitingConfirm:'Aguardando confirmação...',howTitle:'☕ Como se joga?',howOk:'Entendido!',
+    searchingEntity:'Procurando...',noResults:'Sem resultados, escreve tu mesmo',fixedOption:'Opção fixa:',
+    serverLabel:'Servidor',firstQTitle:'Primeira pergunta',fqCoffee:'Café',fqTea:'Chá',
+    questionSent:'Enviada...',freeInputHint:'Escreve algo relacionado com o personagem...',
+    opponentFirstQ:'O pensador está fazendo sua primeira escolha',tagline:'o jogo de associação mental mais viral',
+    howToPlay2:'Como queres jogar?',
+    howSteps:[
+      ['Dois jogadores conectam-se. Um é o ','Pensador',' e o outro o ','Adivinhador.'],
+      ['O Pensador escolhe secretamente uma ','pessoa ou personagem',' (real ou fictício).'],
+      ['A primeira pergunta é sempre ','Café ou Chá?',' e essa resposta fica fixa.'],
+      ['O Pensador escolhe ','a opção que melhor representa',' o seu personagem. Sem trapacear!'],
+      ['Quando o Adivinhador acha que sabe, ','ele adivinha!',' Se errar, continua jogando.'],
+    ]
+  },
+  ru: {
+    yourName:'Твой никнейм',namePlaceholder:'Твой никнейм...',nameError:'Напиши имя чтобы продолжить',
+    play:'Играть',howToPlay:'Как играть?',quickMatch:'🎲 Быстрая игра (случайно)',
+    createRoom:'🔒 Создать приватную комнату',joinRoom:'🔑 Войти по коду',back:'Назад',
+    searching:'Ищем соперника',searchingSub:'Подберём тебе случайного игрока',cancel:'Отмена',
+    roomCode:'Код комнаты',tapToCopy:'Нажми код чтобы скопировать',waiting:'Ожидание игроков',
+    waitingHost:'Ожидание хозяина',ready:'Готов играть!',start:'Начать!',
+    leave:'Выйти',joinTitle:'Войти в комнату',joinBtn:'Войти',roomNotFound:'Комната не найдена',
+    roomFull:'Комната заполнена',thinkerRole:'🧠 Думай о человеке или персонаже',
+    thinkingPrompt:'О ком ты думаешь?',thinkingPlaceholder:'Напр: Шакира, Гарри Поттер...',
+    ready2:'Готово',guessingMsg:'Другой игрок угадывает',guessAttemptTitle:'Угадывающий думает что ты:',
+    correct:'Правильно',incorrect:'Неправильно',guesserRole:'🔍 Угадай о ком он думает',
+    opponentChoosing:'Другой игрок выбирает персонажа',writeQuestion:'Напиши свой вопрос:',
+    askBtn:'Спросить',orIfYouKnow:'или если уже знаешь',guessPlaceholder:'Мой ответ...',
+    guessBtn:'Угадать!',waitError:'Подожди ответа прежде чем спрашивать снова',answerLabel:'Ответ:',
+    nextQuestion:'Теперь задай другой вопрос',won:'Угадал!',lost:'Игра окончена',
+    playAgain:'Играть ещё',home:'Главная',host:'★ Хозяин',codeCopied:'Код скопирован ✓',
+    thinkerChose:'Мыслитель выбрал! Первый вопрос: ☕ Кофе или 🍵 Чай',
+    wrongGuess:'❌ Неверно! Продолжай спрашивать',opponentLeft:'Соперник покинул игру',opponentTimeout:'Соперник не отвечает.',
+    quitConfirmTitle:'Покинуть игру?',quitConfirmMsg:'Частые выходы приведут к блокировке.',
+    quitBtn:'Покинуть',quitCancel:'Продолжить',penaltyMsg:'Блокировка: нельзя играть',
+    penaltyUnit:'секунд',timeLeft:'Осталось:',writeBothOptions:'Напиши оба варианта',
+    waitingConfirm:'Ожидание подтверждения...',howTitle:'☕ Как играть?',howOk:'Понятно!',
+    searchingEntity:'Поиск...',noResults:'Нет результатов, введи сам',fixedOption:'Фикс. вариант:',
+    serverLabel:'Сервер',firstQTitle:'Первый вопрос',fqCoffee:'Кофе',fqTea:'Чай',
+    questionSent:'Отправлен...',freeInputHint:'Напиши что-то связанное с персонажем...',
+    opponentFirstQ:'Мыслитель делает первый выбор',tagline:'самая вирусная игра на ассоциации',
+    howToPlay2:'Как хочешь играть?',
+    howSteps:[
+      ['Два игрока подключаются. Один ','Мыслитель',' (загадывает персонажа), другой ','Угадывающий.'],
+      ['Мыслитель загадывает ','реального или вымышленного персонажа','. Например: Шакира, Гарри Поттер...'],
+      ['Первый вопрос всегда ','Кофе или Чай?',' Ответ остаётся фиксированным на всю игру.'],
+      ['Мыслитель выбирает ','вариант который больше подходит',' его персонажу. Без обмана!'],
+      ['Когда Угадывающий думает что знает — ','он угадывает!',' При ошибке игра продолжается.'],
+    ]
+  },
+  zh: {
+    yourName:'你的昵称',namePlaceholder:'你的昵称...',nameError:'请输入名字以继续',
+    play:'开始',howToPlay:'怎么玩？',quickMatch:'🎲 快速匹配',
+    createRoom:'🔒 创建私人房间',joinRoom:'🔑 用代码加入',back:'返回',
+    searching:'寻找对手',searchingSub:'正在为你匹配玩家',cancel:'取消',
+    roomCode:'房间代码',tapToCopy:'点击代码复制',waiting:'等待玩家',
+    waitingHost:'等待房主开始',ready:'准备好了！',start:'开始！',
+    leave:'离开',joinTitle:'加入房间',joinBtn:'加入',roomNotFound:'未找到房间',
+    roomFull:'房间已满',thinkerRole:'🧠 想一个人物',
+    thinkingPrompt:'你在想谁？',thinkingPlaceholder:'例：莎奇拉、哈利·波特...',
+    ready2:'准备好',guessingMsg:'另一位玩家在猜',guessAttemptTitle:'猜题者认为你是：',
+    correct:'正确',incorrect:'错误',guesserRole:'🔍 猜猜他在想谁',
+    opponentChoosing:'另一位玩家正在选择角色',writeQuestion:'写下你的问题：',
+    askBtn:'提问',orIfYouKnow:'或者如果你已经知道',guessPlaceholder:'我的答案是...',
+    guessBtn:'猜！',waitError:'等待回答后再提问',answerLabel:'回答：',
+    nextQuestion:'现在再问一个问题',won:'猜对了！',lost:'游戏结束',
+    playAgain:'再玩一次',home:'主页',host:'★ 房主',codeCopied:'代码已复制 ✓',
+    thinkerChose:'思考者已选择！第一个问题：☕ 咖啡还是 🍵 茶',
+    wrongGuess:'❌ 错误！继续提问',opponentLeft:'对手离开了游戏',opponentTimeout:'对手没有回应。',
+    quitConfirmTitle:'退出游戏？',quitConfirmMsg:'频繁退出将导致封禁。',
+    quitBtn:'退出',quitCancel:'继续游戏',penaltyMsg:'封禁：无法游戏',
+    penaltyUnit:'秒',timeLeft:'剩余时间：',writeBothOptions:'写下两个选项',
+    waitingConfirm:'等待确认...',howTitle:'☕ 怎么玩？',howOk:'明白了！',
+    searchingEntity:'搜索中...',noResults:'没有结果，请自己输入',fixedOption:'固定选项：',
+    serverLabel:'服务器',firstQTitle:'第一个问题',fqCoffee:'咖啡',fqTea:'茶',
+    questionSent:'已发送...',freeInputHint:'写一些与角色相关的内容...',
+    opponentFirstQ:'思考者正在做第一个选择',tagline:'最火爆的心理联想游戏',
+    howToPlay2:'你想怎么玩？',
+    howSteps:[
+      ['两位玩家连接。一位是','思考者','（秘密选择角色），另一位是','猜题者。'],
+      ['思考者秘密选择一个','真实或虚构的人物','。例如：莎奇拉、哈利·波特...'],
+      ['第一个问题总是','咖啡还是茶？','这个答案在整个游戏中保持固定。'],
+      ['思考者选择','最能代表其角色','的选项。不能作弊！'],
+      ['当猜题者认为知道答案时，','他猜！','如果错了，游戏继续。'],
+    ]
+  },
   de: {
     yourName:'Dein Spitzname',namePlaceholder:'Dein Spitzname...',nameError:'Schreib deinen Namen um fortzufahren',
     play:'Spielen',howToPlay:'Wie spielt man?',quickMatch:'🎲 Schnelles Spiel (zufällig)',
@@ -151,7 +259,7 @@ function setServer(s) {
 }
 
 // ===== TITLE TRANSLATIONS =====
-const titles = { es:'Café o Té', en:'Coffee or Tea', fr:'Café ou Thé', de:'Kaffee oder Tee' };
+const titles = { es:'Café o Té', en:'Coffee or Tea', fr:'Café ou Thé', de:'Kaffee oder Tee', pt:'Café ou Chá', ru:'Кофе или Чай', zh:'咖啡还是茶' };
 function setLang(l){
   lang=l;
   document.querySelectorAll('[data-lang]').forEach(el=>{
@@ -160,6 +268,9 @@ function setLang(l){
   });
   renderHowSteps();
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.l===lang));
+  // Update Wikipedia search language
+  const wikiLangs={es:'es',en:'en',fr:'fr',de:'de',pt:'pt',ru:'ru',zh:'zh'};
+  window._wikiLang = wikiLangs[l]||'en';
   // Update page title and logo
   const titleText = titles[l] || 'Café o Té';
   document.title = titleText;
@@ -190,7 +301,7 @@ let selectedEntity=null;
 async function searchWikipedia(query){
   try{
     // Search Wikidata for people and fictional characters
-    const url=`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=${lang}&type=item&limit=20&format=json&origin=*`;
+    const url=`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=${window._wikiLang||lang}&type=item&limit=20&format=json&origin=*`;
     const res=await fetch(url);
     const data=await res.json();
     const PERSON_KEYWORDS=['human','person','actor','actress','singer','player','politician',
@@ -342,7 +453,7 @@ function goToPlay(){
 
 function showHowToPlay(){renderHowSteps();document.getElementById('modal-howto').classList.add('active');}
 function closeHowToPlay(){document.getElementById('modal-howto').classList.remove('active');}
-function findRandom(){showScreen('screen-matchmaking');socket.emit('find_random',{name:state.playerName,server:selectedServer});}
+function findRandom(){showScreen('screen-matchmaking');socket.emit('find_random',{name:state.playerName,server:selectedServer,lang});}
 function cancelMatchmaking(){socket.emit('cancel_matchmaking');showScreen('screen-play');}
 function createRoom(){socket.emit('create_room',{name:state.playerName});}
 function showJoinRoom(){document.getElementById('join-code').value='';document.getElementById('join-error').style.display='none';showScreen('screen-join');}
