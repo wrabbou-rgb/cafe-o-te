@@ -34,7 +34,7 @@
     @keyframes drift { from{transform:translate(0,0) scale(1);} to{transform:translate(60px,40px) scale(1.1);} }
 
     /* LANG BAR */
-    .lang-bar { position:fixed; top:16px; right:16px; display:flex; gap:6px; z-index:50; transition: opacity 0.3s; }
+    .lang-bar { position:fixed; top:16px; right:16px; display:flex; flex-wrap:wrap; gap:5px; z-index:50; transition: opacity 0.3s; max-width:200px; justify-content:flex-end; }
     .hide-lang .lang-bar { opacity:0; pointer-events:none; }
     .lang-btn { background:var(--card); border:1px solid var(--border); color:var(--muted); font-family:'Unbounded',sans-serif; font-size:0.65rem; padding:6px 10px; border-radius:8px; cursor:pointer; transition:all 0.2s; }
     .lang-btn.active { background:var(--accent); color:#0d0b08; border-color:var(--accent); }
@@ -199,6 +199,9 @@
   <button class="lang-btn" data-l="en" onclick="setLang('en')">EN</button>
   <button class="lang-btn" data-l="fr" onclick="setLang('fr')">FR</button>
   <button class="lang-btn" data-l="de" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" data-l="pt" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" data-l="ru" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn" data-l="zh" onclick="setLang('zh')">中文</button>
 </div>
 
 <!-- HOME -->
