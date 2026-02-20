@@ -14,9 +14,10 @@ const rooms = new Map();
 const playerRoom = new Map();
 const matchQueues = { eu: [], us: [], as: [] };
 
-// Penalty tracking: socketId -> { quits, penaltyUntil }
+// Penalty tracking: clientId (persistent) -> { quits, penaltyUntil }
 const penalties = new Map();
 const QUIT_PENALTIES = [0, 60, 300, 900, 3600]; // 0, 1min, 5min, 15min, 1h
+const socketToClient = new Map(); // socketId -> clientId
 
 const TURN_TIMEOUT = 45000; // 45 seconds
 
@@ -101,18 +102,24 @@ function leaveRoom(socket, io) {
   }
 }
 
+function getClientId(socketId) {
+  return socketToClient.get(socketId) || socketId;
+}
+
 function recordQuit(socketId) {
+  const clientId = getClientId(socketId);
   const now = Date.now();
-  let rec = penalties.get(socketId) || { quits: 0, penaltyUntil: 0 };
+  let rec = penalties.get(clientId) || { quits: 0, penaltyUntil: 0 };
   rec.quits = Math.min(rec.quits + 1, QUIT_PENALTIES.length - 1);
   const penaltyMs = QUIT_PENALTIES[rec.quits] * 1000;
   rec.penaltyUntil = now + penaltyMs;
-  penalties.set(socketId, rec);
+  penalties.set(clientId, rec);
   return { quits: rec.quits, penaltySeconds: QUIT_PENALTIES[rec.quits] };
 }
 
 function checkPenalty(socketId) {
-  const rec = penalties.get(socketId);
+  const clientId = getClientId(socketId);
+  const rec = penalties.get(clientId);
   if (!rec) return 0;
   const remaining = Math.ceil((rec.penaltyUntil - Date.now()) / 1000);
   return remaining > 0 ? remaining : 0;
@@ -121,6 +128,11 @@ function checkPenalty(socketId) {
 // ===== SOCKET EVENTS =====
 io.on('connection', (socket) => {
   console.log('Connected:', socket.id);
+
+  // --- REGISTER CLIENT ID (persistent across reloads) ---
+  socket.on('register_client', ({ clientId }) => {
+    if (clientId) socketToClient.set(socket.id, clientId);
+  });
 
   // --- CHECK PENALTY ---
   socket.on('check_penalty', () => {
@@ -317,6 +329,7 @@ io.on('connection', (socket) => {
   // --- DISCONNECT ---
   socket.on('disconnect', () => {
     console.log('Disconnected:', socket.id);
+    socketToClient.delete(socket.id);
     for (const queue of Object.values(matchQueues)) {
       const idx = queue.indexOf(socket);
       if (idx > -1) { queue.splice(idx, 1); break; }
